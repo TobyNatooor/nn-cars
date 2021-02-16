@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="script.js"></script>
+    <title>Car Game NN</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 5vw, 4rem);
+            margin: 10px;
+        }
+
+        canvas {
+            border: 2px solid black;
+        }
+
+        button {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            padding: 10px;
+
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Car Game and Neural Network</h1>
+    <div>
+        <canvas id="theCanvas" width="500" height="500"></canvas>
+    </div>
+    <div>
+        <button id="leftBtn">Left</button>
+        <button id="rightBtn">Right</button>
+    </div>
+    <button id="driveBtn">Drive</button>
+</body>
+
+</html>
