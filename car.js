@@ -17,20 +17,21 @@ export default class Car {
 
     create() {
         this.degrees += this.turnRate
-        let angel = (Math.acos(((this.height / 2)) / this.radius)) * 2
-        console.log(angel)
+        let angel = (Math.acos(((this.width / 2)) / this.radius) * 2) / (Math.PI / 180)
         let carShape = new Path2D()
         carShape.moveTo(this.getX(this.degrees + 0), this.getY(this.degrees + 0))
-        carShape.lineTo(this.getX(this.degrees + 90), this.getY(this.degrees + angel))
+        carShape.lineTo(this.getX(this.degrees + angel), this.getY(this.degrees + angel))
         carShape.lineTo(this.getX(this.degrees + 180), this.getY(this.degrees + 180))
-        carShape.lineTo(this.getX(this.degrees + 270), this.getY(this.degrees + 270))
+        carShape.lineTo(this.getX(this.degrees + 180 + angel), this.getY(this.degrees + 180 + angel))
+
+        //this.ctx.arc(this.coord.x, this.coord.y, this.radius, 0, 2 * Math.PI)
 
         this.ctx.fillStyle = this.carColor
         this.ctx.fill(carShape)
         this.ctx.stroke()
     }
     remove() {
-        let removeRange = 1
+        let removeRange = 2
         let tempColor = this.carColor
         this.carColor = 'white'
         this.coord.x -= removeRange
@@ -54,7 +55,7 @@ export default class Car {
     }
     animate() {
         if (this.isDriving) {
-            this.move(3)
+            this.move(1)
             this.stopID = window.requestAnimationFrame(() => this.animate())
         }
     }
