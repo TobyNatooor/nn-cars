@@ -6,7 +6,7 @@ export default class Car {
         this.carColor = carColor
         this.height = 80
         this.width = 150
-        this.degrees = 0
+        this.degrees = 62
         this.turnRate = 0
         this.isDriving = false
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
@@ -17,6 +17,7 @@ export default class Car {
 
     create() {
         this.degrees += this.turnRate
+        this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         let angel = (Math.acos(((this.width / 2)) / this.radius) * 2) / (Math.PI / 180)
         let carShape = new Path2D()
         carShape.moveTo(this.getX(this.degrees + 0), this.getY(this.degrees + 0))
@@ -31,18 +32,14 @@ export default class Car {
         this.ctx.stroke()
     }
     remove() {
-        let removeRange = 2
+        let removeRange = 6
         let tempColor = this.carColor
         this.carColor = 'white'
-        this.coord.x -= removeRange
-        this.coord.y -= removeRange
-        this.height += removeRange * 5
+        this.height += removeRange
         this.width += removeRange
         this.create()
         this.carColor = tempColor
-        this.coord.x += removeRange
-        this.coord.y += removeRange
-        this.height -= removeRange * 5
+        this.height -= removeRange
         this.width -= removeRange
     }
     turn(amount) {
@@ -50,7 +47,10 @@ export default class Car {
     }
     move(amount) {
         this.remove()
-        this.coord.x += amount
+        let xAmount = (((this.degrees % 242) - 62) / -360) * amount
+        // let yAmount
+        this.coord.x += xAmount
+        // this.coord.y += yAmount
         this.create()
     }
     animate() {
