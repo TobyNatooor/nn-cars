@@ -12,16 +12,16 @@ export default class Car {
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
     }
 
-    getX = (degrees) => this.radius * Math.sin((Math.PI * 2) / 360 * degrees)
-    getY = (degrees) => this.radius * Math.cos((Math.PI * 2) / 360 * degrees)
+    getX = (degrees) => this.coord.x + (this.radius * Math.sin((Math.PI * 2) / 360 * degrees))
+    getY = (degrees) => this.coord.y - (this.radius * Math.cos((Math.PI * 2) / 360 * degrees))
 
     create() {
         this.degrees += this.turnRate
         let carShape = new Path2D()
-        carShape.moveTo(this.coord.x + this.getX(this.degrees), this.coord.y - this.getY(this.degrees))
-        carShape.lineTo(this.coord.x + this.getX(this.degrees+90), this.coord.y - this.getY(this.degrees+90))
-        carShape.lineTo(this.coord.x + this.getX(this.degrees+180), this.coord.y - this.getY(this.degrees+180))
-        carShape.lineTo(this.coord.x + this.getX(this.degrees+270), this.coord.y - this.getY(this.degrees+270))
+        carShape.moveTo(this.getX(this.degrees + 0), this.getY(this.degrees + 0))
+        carShape.lineTo(this.getX(this.degrees + 90), this.getY(this.degrees + 90))
+        carShape.lineTo(this.getX(this.degrees + 180), this.getY(this.degrees + 180))
+        carShape.lineTo(this.getX(this.degrees + 270), this.getY(this.degrees + 270))
 
         this.ctx.fillStyle = this.carColor
         this.ctx.fill(carShape)
