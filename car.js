@@ -17,9 +17,11 @@ export default class Car {
 
     create() {
         this.degrees += this.turnRate
+        let angel = (Math.acos(((this.height / 2)) / this.radius)) * 2
+        console.log(angel)
         let carShape = new Path2D()
         carShape.moveTo(this.getX(this.degrees + 0), this.getY(this.degrees + 0))
-        carShape.lineTo(this.getX(this.degrees + 90), this.getY(this.degrees + 90))
+        carShape.lineTo(this.getX(this.degrees + 90), this.getY(this.degrees + angel))
         carShape.lineTo(this.getX(this.degrees + 180), this.getY(this.degrees + 180))
         carShape.lineTo(this.getX(this.degrees + 270), this.getY(this.degrees + 270))
 
