@@ -7,13 +7,14 @@ c.create()
 
 document.getElementById('driveBtn').addEventListener('click', () => c.drive())
 
-let leftBtn = document.getElementById('leftBtn')
-leftBtn.addEventListener('mouseover', () => { c.turn(-1.5) })
-leftBtn.addEventListener('mouseout', () => { c.turn(0) })
+document.getElementById('leftBtn')
+    .addEventListener('click', () => { c.turn(-1.5) })
 
-let rightBtn = document.getElementById('rightBtn')
-rightBtn.addEventListener('mouseover', () => { c.turn(1.5) })
-rightBtn.addEventListener('mouseout', () => { c.turn(0) })
+document.getElementById('forwardBtn')
+    .addEventListener('click', () => { c.turn(0) })
+
+document.getElementById('rightBtn')
+    .addEventListener('click', () => { c.turn(1.5) })
 
 document.getElementById('testBtn').addEventListener('click', () => {
     c.test()
