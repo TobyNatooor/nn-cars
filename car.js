@@ -1,4 +1,3 @@
-
 export default class Car {
     constructor({ canvasID, carColor }) {
         this.canvas = document.getElementById(canvasID)
@@ -14,6 +13,7 @@ export default class Car {
         this.isDriving = false
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
+        this.obstacleColor = [190, 110, 110]
     }
 
     getX = (degrees) => this.coord.x + (this.radius * Math.sin((Math.PI * 2) / 360 * degrees))
@@ -22,6 +22,7 @@ export default class Car {
     create() {
         this.degrees += this.turnRate
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
+        this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
         let carShape = new Path2D()
         carShape.moveTo(this.getX(this.degrees - 90 - this.angel / 2), this.getY(this.degrees - 90 - this.angel / 2))
         carShape.lineTo(this.getX(this.degrees - 90 + this.angel / 2), this.getY(this.degrees - 90 + this.angel / 2))
@@ -31,17 +32,16 @@ export default class Car {
         this.ctx.fillStyle = this.carColor
         this.ctx.fill(carShape)
 
-        //this.ctx.arc(this.coord.x, this.coord.y, this.radius, 0, 2 * Math.PI)
-
-        let square = new Path2D()
-        square.rect(300, 200, 100, 100)
-        this.ctx.fillStyle = 'pink'
-        this.ctx.fill(square)
+        // this.ctx.arc(
+        //     this.getX(this.degrees + 100 - this.angel / 2),
+        //     this.getY(this.degrees + 90 - this.angel / 2),
+        //     2, 0, 2 * Math.PI
+        // )
 
         this.ctx.stroke()
     }
     remove() {
-        let removeRange = 6
+        let removeRange = 3
         let tempColor = this.carColor
         this.carColor = 'white'
         this.height += removeRange
@@ -51,17 +51,27 @@ export default class Car {
         this.height -= removeRange
         this.width -= removeRange
     }
-    getColorInFront() {
-        console.log(this.ctx.getImageData(
-            this.getX(this.degrees - 90 - this.angel / 2),
-            this.getY(this.degrees - 90 - this.angel / 2),
+    isObstacleInfront() {
+        let leftRGB = this.ctx.getImageData(
+            this.getX(this.degrees + 100 - this.angel / 2),
+            this.getY(this.degrees + 90 - this.angel / 2),
             1, 1).data
-        )
-        console.log(this.ctx.getImageData(
-            this.getX(this.degrees - 90 + this.angel / 2),
-            this.getY(this.degrees - 90 + this.angel / 2),
+        let rightRGB = this.ctx.getImageData(
+            this.getX(this.degrees + 80 + this.angel / 2),
+            this.getY(this.degrees + 90 + this.angel / 2),
             1, 1).data
-        )
+        if (rightRGB[0] == this.obstacleColor[0] &&
+            rightRGB[1] == this.obstacleColor[1] &&
+            rightRGB[2] == this.obstacleColor[2]) {
+            return true
+        }
+        else if (leftRGB[0] == this.obstacleColor[0] &&
+            leftRGB[1] == this.obstacleColor[1] &&
+            leftRGB[2] == this.obstacleColor[2]) {
+            return true
+        } else {
+            return false
+        }
     }
     turn(amount) {
         this.turnRate = amount
@@ -77,6 +87,9 @@ export default class Car {
     }
     animate() {
         this.move(0.3)
+        if (this.isObstacleInfront()) {
+            window.alert("Obstacle hit!")
+        }
         this.stopID = window.requestAnimationFrame(() => this.animate())
     }
     drive() {
@@ -89,6 +102,10 @@ export default class Car {
     }
 
     test() {
-        this.getColorInFront()
+        let square = new Path2D()
+        square.rect(300, 200, 100, 100)
+        this.ctx.fillStyle = `rgb(${this.obstacleColor[0]} ${this.obstacleColor[1]} ${this.obstacleColor[2]})`
+        this.ctx.fill(square)
+        this.ctx.stroke()
     }
 }
