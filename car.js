@@ -16,7 +16,9 @@ export default class Car {
     getY = (degrees) => this.coord.y - (this.radius * Math.cos((Math.PI * 2) / 360 * degrees))
 
     create() {
-        this.degrees += this.turnRate
+        this.degrees = (this.degrees % 360) + this.turnRate
+        if (this.degrees < 0) this.degrees = 359.9
+
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         let angel = (Math.acos(((this.width / 2)) / this.radius) * 2) / (Math.PI / 180)
         let carShape = new Path2D()
@@ -47,7 +49,23 @@ export default class Car {
     }
     move(amount) {
         this.remove()
-        let xAmount = (((this.degrees % 242) - 62) / -360) * amount
+        let xAmount
+        if (62 > this.degrees) {
+            xAmount = ((2 / -180) * (62 - this.degrees) + 1) * amount
+            console.log((62 - this.degrees).toFixed(2), this.degrees.toFixed())
+        }
+        else if (62 <= this.degrees && this.degrees < 242) {
+            xAmount = ((2 / -180) * (this.degrees - 62) + 1) * amount
+            console.log((this.degrees - 62).toFixed(2), this.degrees.toFixed())
+        }
+        else if (this.degrees >= 242) {
+            xAmount = ((2 / -180) * ((this.degrees - 62)-(((this.degrees - 62) % 180))) + 1) * amount
+            console.log(((this.degrees - 62)-((this.degrees - 62) % 180)).toFixed(2), this.degrees.toFixed())
+        }
+
+        // console.log(`xAmount:${xAmount.toFixed(2)}`)
+        // console.log(`Degrees:${this.degrees.toFixed(2)}`)
+
         // let yAmount
         this.coord.x += xAmount
         // this.coord.y += yAmount
