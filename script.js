@@ -8,7 +8,7 @@ let c = new Car({
 
 c.create()
 
-document.getElementById('driveBtn').addEventListener('click', () => c.drive())
+document.getElementById('driveBtn').addEventListener('click', () => c.drive(1))
 
 document.getElementById('leftBtn')
     .addEventListener('click', () => { c.turn(-1) })
