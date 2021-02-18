@@ -32,11 +32,18 @@ export default class Car {
         this.ctx.fillStyle = this.carColor
         this.ctx.fill(carShape)
 
+        /*  */
         // this.ctx.arc(
         //     this.getX(this.degrees + 100 - this.angel / 2),
         //     this.getY(this.degrees + 90 - this.angel / 2),
         //     2, 0, 2 * Math.PI
         // )
+        // this.ctx.arc(
+        //     this.getX(this.degrees + 80 + this.angel / 2),
+        //     this.getY(this.degrees + 90 + this.angel / 2),
+        //     2, 0, 2 * Math.PI
+        // )
+        /*  */
 
         this.ctx.stroke()
     }
@@ -85,17 +92,17 @@ export default class Car {
         this.coord.y += yAmount
         this.create()
     }
-    animate() {
-        this.move(0.3)
+    animate(speed) {
+        this.move(speed)
         if (this.isObstacleInfront()) {
-            window.alert("Obstacle hit!")
+            location.reload()
         }
-        this.stopID = window.requestAnimationFrame(() => this.animate())
+        this.stopID = window.requestAnimationFrame(() => this.animate(speed))
     }
-    drive() {
+    drive(speed) {
         this.isDriving = !this.isDriving
         if (this.isDriving) {
-            this.animate()
+            this.animate(speed)
         } else {
             window.cancelAnimationFrame(this.stopID)
         }
@@ -103,7 +110,7 @@ export default class Car {
 
     test() {
         let square = new Path2D()
-        square.rect(300, 200, 100, 100)
+        square.rect(300, 200, 3, 100)
         this.ctx.fillStyle = `rgb(${this.obstacleColor[0]} ${this.obstacleColor[1]} ${this.obstacleColor[2]})`
         this.ctx.fill(square)
         this.ctx.stroke()
