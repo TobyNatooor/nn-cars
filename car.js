@@ -1,13 +1,16 @@
 export default class Car {
-    constructor({ canvasID, carColor }) {
+    constructor({ canvasID, color, height, width, x, y }) {
+        this.height = height ? height : 25
+        this.width = width ? width : 40
+        this.carColor = color
         this.canvas = document.getElementById(canvasID)
-        this.canvas.width = 500
-        this.canvas.height = 500
         this.ctx = this.canvas.getContext('2d')
-        this.coord = { x: 250, y: 250 }
-        this.carColor = carColor
-        this.height = 25
-        this.width = 40
+        this.canvas.width = 1000
+        this.canvas.height = 1000
+        this.coord = {
+            x: x ? x : 250,
+            y: y ? y : 250
+        }
         this.degrees = 0
         this.turnRate = 0
         this.isDriving = false
@@ -109,10 +112,12 @@ export default class Car {
     }
 
     test() {
-        let square = new Path2D()
-        square.rect(300, 200, 3, 100)
-        this.ctx.fillStyle = `rgb(${this.obstacleColor[0]} ${this.obstacleColor[1]} ${this.obstacleColor[2]})`
-        this.ctx.fill(square)
-        this.ctx.stroke()
+        // let square = new Path2D()
+        // square.rect(300, 200, 3, 100)
+        // this.ctx.fillStyle = `rgb(${this.obstacleColor[0]} ${this.obstacleColor[1]} ${this.obstacleColor[2]})`
+        // this.ctx.fill(square)
+        // this.ctx.stroke()
+
+        console.log(this.coord.x, this.coord.y);
     }
 }
