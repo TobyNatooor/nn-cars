@@ -130,10 +130,9 @@ export default class Car {
     }
 
     test() {
-        console.log(
-            this.distances[0].distance,
-            this.distances[1].distance,
-            this.distances[2].distance
-        )
+        console.table([
+            [this.distances[0].distance, this.distances[1].distance, this.distances[2].distance],
+            ["left", "forward", "right"]
+        ])
     }
 }
