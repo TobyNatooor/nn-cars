@@ -1,8 +1,9 @@
 
 export default class Car {
-    constructor({ canvasID, color, height, width, x, y }) {
+    constructor({ canvasID, obstacles, color, height, width, x, y }) {
         this.height = height ? height : 25
         this.width = width ? width : 40
+        this.obstacles = obstacles
         this.carColor = color
         this.canvas = document.getElementById(canvasID)
         this.ctx = this.canvas.getContext('2d')
@@ -25,32 +26,36 @@ export default class Car {
         this.degrees += this.turnRate
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
-        let carShape = new Path2D()
-        carShape.moveTo(this.getX(this.degrees - 90 - this.angel / 2), this.getY(this.degrees - 90 - this.angel / 2))
-        carShape.lineTo(this.getX(this.degrees - 90 + this.angel / 2), this.getY(this.degrees - 90 + this.angel / 2))
-        carShape.lineTo(this.getX(this.degrees + 90 - this.angel / 2), this.getY(this.degrees + 90 - this.angel / 2))
-        carShape.lineTo(this.getX(this.degrees + 90 + this.angel / 2), this.getY(this.degrees + 90 + this.angel / 2))
+
+        this.ctx.beginPath()
+        this.ctx.moveTo(this.getX(this.degrees - 90 - this.angel / 2), this.getY(this.degrees - 90 - this.angel / 2))
+        this.ctx.lineTo(this.getX(this.degrees - 90 + this.angel / 2), this.getY(this.degrees - 90 + this.angel / 2))
+        this.ctx.lineTo(this.getX(this.degrees + 90 - this.angel / 2), this.getY(this.degrees + 90 - this.angel / 2))
+        this.ctx.lineTo(this.getX(this.degrees + 90 + this.angel / 2), this.getY(this.degrees + 90 + this.angel / 2))
 
         this.ctx.fillStyle = this.carColor
-        this.ctx.fill(carShape)
+        this.ctx.fill()
 
         /*  */
-        // left
-        this.ctx.arc(
-            this.getX(this.degrees + 100 - this.angel / 2),
-            this.getY(this.degrees + 90 - this.angel / 2),
-            2, 0, 2 * Math.PI
-        )
-        // right
-        this.ctx.arc(
-            this.getX(this.degrees + 80 + this.angel / 2),
-            this.getY(this.degrees + 90 + this.angel / 2),
-            2, 0, 2 * Math.PI
-        )
+        // // left
+        // this.ctx.arc(
+        //     this.getX(this.degrees + 100 - this.angel / 2),
+        //     this.getY(this.degrees + 90 - this.angel / 2),
+        //     2, 0, 2 * Math.PI
+        // )
+        // // right
+        // this.ctx.arc(
+        //     this.getX(this.degrees + 80 + this.angel / 2),
+        //     this.getY(this.degrees + 90 + this.angel / 2),
+        //     2, 0, 2 * Math.PI
+        // )
         /*  */
 
-        this.ctx.stroke()
+        // this.ctx.closePath()
+        // this.ctx.stroke()
+
     }
+
     remove() {
         let removeRange = 3
         let tempColor = this.carColor
@@ -62,33 +67,35 @@ export default class Car {
         this.height -= removeRange
         this.width -= removeRange
     }
-    isObstacleInfront(obstacleCoords) {
-        // let leftRGB = this.ctx.getImageData(
-        //     this.getX(this.degrees + 100 - this.angel / 2),
-        //     this.getY(this.degrees + 90 - this.angel / 2),
-        //     1, 1).data
-        // let rightRGB = this.ctx.getImageData(
-        //     this.getX(this.degrees + 80 + this.angel / 2),
-        //     this.getY(this.degrees + 90 + this.angel / 2),
-        //     1, 1).data
-        // if (rightRGB[0] == this.obstacleColor[0] &&
-        //     rightRGB[1] == this.obstacleColor[1] &&
-        //     rightRGB[2] == this.obstacleColor[2]) {
-        //     return true
-        // }
-        // else if (leftRGB[0] == this.obstacleColor[0] &&
-        //     leftRGB[1] == this.obstacleColor[1] &&
-        //     leftRGB[2] == this.obstacleColor[2]) {
-        //     return true
-        // } else {
-        //     return false
-        // }
-        
-        return false
+
+    isObstacleInfront() {
+        let frontLeft = {
+            x: this.getX(this.degrees + 100 - this.angel / 2),
+            y: this.getY(this.degrees + 90 - this.angel / 2)
+        }
+        let frontRight = {
+            x: this.getX(this.degrees + 80 + this.angel / 2),
+            y: this.getY(this.degrees + 90 + this.angel / 2)
+        }
+
+        let hit = false
+        this.obstacles.forEach(obstacle => {
+            if (
+                obstacle.x < frontLeft.x && frontLeft.x < obstacle.x + obstacle.width
+                && obstacle.y < frontLeft.y && frontLeft.y < obstacle.y + obstacle.height
+                || obstacle.x < frontRight.x && frontRight.x < obstacle.x + obstacle.width
+                && obstacle.y < frontRight.y && frontRight.y < obstacle.y + obstacle.height
+            ) {
+                hit = true
+            }
+        })
+        return hit
     }
+
     turn(amount) {
         this.turnRate = amount
     }
+
     move(amount) {
         this.remove()
         let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * amount
@@ -98,17 +105,19 @@ export default class Car {
         this.coord.y += yAmount
         this.create()
     }
-    animate(speed, obstacleCoords) {
+
+    animate(speed) {
         this.move(speed)
-        if (this.isObstacleInfront(obstacleCoords)) {
+        if (this.isObstacleInfront()) {
             location.reload()
         }
         this.stopID = window.requestAnimationFrame(() => this.animate(speed))
     }
-    drive(speed, obstacleCoords) {
+
+    drive(speed) {
         this.isDriving = !this.isDriving
         if (this.isDriving) {
-            this.animate(speed, obstacleCoords)
+            this.animate(speed)
         } else {
             window.cancelAnimationFrame(this.stopID)
         }

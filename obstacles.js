@@ -4,27 +4,19 @@ export default class Obstacles {
         this.canvas = document.getElementById(canvasID)
         this.ctx = this.canvas.getContext('2d')
         this.test = 0
-        this.coords = []
+        this.data = []
     }
-    getCoords(e) {
-        if (this.test > 2) {
-            this.canvas.removeEventListener('click', (e) => this.getCoords(e))
-        }
-        const rect = this.canvas.getBoundingClientRect()
-        let x = (e.clientX - rect.left).toFixed()
-        let y = (e.clientY - rect.top).toFixed()
-        console.log(x, y, this.test)
-        this.test++
-    }
-    click() {
-        this.canvas.addEventListener('click', (e) => this.getCoords(e))
-    }
-    square(x, y, color) {
-        this.coords.push(x, y)
+    square(x, y, width, height, color) {
+        this.data.push({ x: x, y: y, width: width, height: height })
+
         this.ctx.beginPath()
-        this.ctx.rect(x, y, 50, 50)
+        this.ctx.rect(x, y, width, height)
+        this.ctx.closePath()
+
         this.ctx.fillStyle = color
         this.ctx.fill()
-        this.ctx.stroke()
+
+        // this.ctx.strokeStyle = color
+        // this.ctx.stroke()
     }
 }

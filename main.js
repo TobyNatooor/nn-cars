@@ -6,24 +6,25 @@ import Obstacles from './obstacles.js'
 let cvs = new Canvas({
     canvasID: 'theCanvas'
 })
-let car = new Car({
-    canvasID: cvs.canvasID,
-    color: 'green',
-})
 let obstacles = new Obstacles({
     canvasID: cvs.canvasID,
 })
+let car = new Car({
+    canvasID: cvs.canvasID,
+    color: 'green',
+    obstacles: obstacles.data
+})
 
-obstacles.click()
-obstacles.square(400, 250, 'red')
+obstacles.square(400, 250, 100, 200, 'red')
+obstacles.square(600, 250, 100, 50, 'blue')
 cvs.mouseCoords()
 car.create()
 
-let carSpeed = 8
+let carSpeed = 3
 let carTurnRate = 2
 
 // button control
-document.getElementById('driveBtn').addEventListener('click', () => car.drive(carSpeed, obstacles.coords))
+document.getElementById('driveBtn').addEventListener('click', () => car.drive(carSpeed))
 document.getElementById('leftBtn').addEventListener('click', () => { car.turn(-carTurnRate) })
 document.getElementById('rightBtn').addEventListener('click', () => { car.turn(carTurnRate) })
 document.getElementById('forwardBtn').addEventListener('click', () => { car.turn(0) })
@@ -40,5 +41,3 @@ document.addEventListener('keydown', (e) => {
         default: break
     }
 })
-
-console.log(document.body.clientWidth, document.body.clientHeight)
