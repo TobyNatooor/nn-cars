@@ -11,8 +11,9 @@ export default class Car {
             x: x ? x : 250,
             y: y ? y : 250
         }
+        this.speed = 0
         this.degrees = 0
-        this.turnRate = 0
+        this.turnSpeed = 0
         this.isDriving = false
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
@@ -23,7 +24,7 @@ export default class Car {
     getY = (degrees) => this.coord.y - (this.radius * Math.cos((Math.PI * 2) / 360 * degrees))
 
     create() {
-        this.degrees += this.turnRate
+        this.degrees += this.turnSpeed
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
 
@@ -50,22 +51,6 @@ export default class Car {
         //     2, 0, 2 * Math.PI
         // )
         /*  */
-
-        // this.ctx.closePath()
-        // this.ctx.stroke()
-
-    }
-
-    remove() {
-        let removeRange = 3
-        let tempColor = this.carColor
-        this.carColor = 'white'
-        this.height += removeRange
-        this.width += removeRange
-        this.create()
-        this.carColor = tempColor
-        this.height -= removeRange
-        this.width -= removeRange
     }
 
     isObstacleInfront() {
@@ -92,44 +77,21 @@ export default class Car {
         return hit
     }
 
-    turn(amount) {
-        this.turnRate = amount
-    }
-
-    move(amount) {
-        this.remove()
-        let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * amount
-        let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * amount
-
-        this.coord.x += xAmount
-        this.coord.y += yAmount
-        this.create()
-    }
-
-    animate(speed) {
-        this.move(speed)
+    drive() {
         if (this.isObstacleInfront()) {
+            console.log("obstacle hit!")
             location.reload()
-        }
-        this.stopID = window.requestAnimationFrame(() => this.animate(speed))
-    }
-
-    drive(speed) {
-        this.isDriving = !this.isDriving
-        if (this.isDriving) {
-            this.animate(speed)
         } else {
-            window.cancelAnimationFrame(this.stopID)
+            let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
+            let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
+
+            this.coord.x += xAmount
+            this.coord.y += yAmount
+            this.create()
         }
     }
 
     test() {
-        let square = new Path2D()
-        square.rect(300, 200, 3, 100)
-        this.ctx.fillStyle = `rgb(${this.obstacleColor[0]} ${this.obstacleColor[1]} ${this.obstacleColor[2]})`
-        this.ctx.fill(square)
-        this.ctx.stroke()
 
-        // console.log(this.coord.x, this.coord.y);
     }
 }

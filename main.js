@@ -20,24 +20,29 @@ obstacles.square(600, 250, 100, 50, 'blue')
 cvs.mouseCoords()
 car.create()
 
-let carSpeed = 3
-let carTurnRate = 2
-
 // button control
-document.getElementById('driveBtn').addEventListener('click', () => car.drive(carSpeed))
-document.getElementById('leftBtn').addEventListener('click', () => { car.turn(-carTurnRate) })
-document.getElementById('rightBtn').addEventListener('click', () => { car.turn(carTurnRate) })
-document.getElementById('forwardBtn').addEventListener('click', () => { car.turn(0) })
+document.getElementById('driveBtn').addEventListener('click', () => { car.speed = 5 })
+document.getElementById('leftBtn').addEventListener('click', () => { car.turnSpeed = -5 })
+document.getElementById('rightBtn').addEventListener('click', () => { car.turnSpeed = 5 })
+document.getElementById('forwardBtn').addEventListener('click', () => { car.turnSpeed = 0 })
 document.getElementById('testBtn').addEventListener('click', () => { car.test() })
 
 // keyboard control
 document.addEventListener('keydown', (e) => {
     switch (e.code) {
-        case "KeyW": { car.turn(0) } break
-        case "KeyA": { car.turn(-carTurnRate) } break
-        case "KeyD": { car.turn(carTurnRate) } break
-        case "Space": { car.drive(carSpeed) } break
+        case "KeyW": { car.turnSpeed = 0 } break
+        case "KeyA": { car.turnSpeed = -5 } break
+        case "KeyD": { car.turnSpeed = 5 } break
+        case "Space": { car.speed = 5 } break
         case "KeyX": { car.test() } break
         default: break
     }
 })
+
+function animate() {
+    cvs.clear()
+    car.drive()
+    obstacles.draw()
+    let stopID = window.requestAnimationFrame(animate)
+}
+animate()

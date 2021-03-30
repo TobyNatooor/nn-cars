@@ -7,6 +7,7 @@ export default class Canvas {
         this.canvas.width = 1000
         this.canvas.height = 1000
     }
+
     mouseCoords() {
         this.canvas.addEventListener('mousemove', (e) => {
             const rect = this.canvas.getBoundingClientRect()
@@ -17,5 +18,9 @@ export default class Canvas {
             this.ctx.font = "30px Arial";
             this.ctx.fillText(`X: ${x} Y: ${y}`, 0, this.canvas.height - 5)
         })
+    }
+
+    clear() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     }
 }

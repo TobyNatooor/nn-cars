@@ -6,17 +6,18 @@ export default class Obstacles {
         this.test = 0
         this.data = []
     }
+
     square(x, y, width, height, color) {
-        this.data.push({ x: x, y: y, width: width, height: height })
+        this.data.push({ x: x, y: y, width: width, height: height, color: color })
+    }
 
-        this.ctx.beginPath()
-        this.ctx.rect(x, y, width, height)
-        this.ctx.closePath()
-
-        this.ctx.fillStyle = color
-        this.ctx.fill()
-
-        // this.ctx.strokeStyle = color
-        // this.ctx.stroke()
+    draw() {
+        this.data.forEach(obstacle => {
+            this.ctx.beginPath()
+            this.ctx.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height)
+            this.ctx.closePath()
+            this.ctx.fillStyle = obstacle.color
+            this.ctx.fill()
+        })
     }
 }
