@@ -4,20 +4,25 @@ export default class Canvas {
         this.canvasID = canvasID
         this.canvas = document.getElementById(this.canvasID)
         this.ctx = this.canvas.getContext('2d')
-        this.canvas.width = 1000
+        this.canvas.width = window.innerWidth
         this.canvas.height = 1000
     }
 
-    mouseCoords() {
+    getMouseCoordsEL() {
         this.canvas.addEventListener('mousemove', (e) => {
             const rect = this.canvas.getBoundingClientRect()
-            let x = (e.clientX - rect.left).toFixed()
-            let y = (e.clientY - rect.top).toFixed()
-            this.ctx.clearRect(0, this.canvas.height - 30, 230, 30)
+            this.mouseCoords = {
+                x: (e.clientX - rect.left).toFixed(),
+                y: (e.clientY - rect.top).toFixed()
+            }
+        })
+    }
+    showMouseCoords() {
+        if (this.mouseCoords) {
             this.ctx.fillStyle = "black";
             this.ctx.font = "30px Arial";
-            this.ctx.fillText(`X: ${x} Y: ${y}`, 0, this.canvas.height - 5)
-        })
+            this.ctx.fillText(`X: ${this.mouseCoords.x} Y: ${this.mouseCoords.y}`, 0, this.canvas.height - 5)
+        }
     }
 
     clear() {

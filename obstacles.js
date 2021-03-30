@@ -7,7 +7,7 @@ export default class Obstacles {
         this.data = []
     }
 
-    square(x, y, width, height, color) {
+    addSquare(x, y, width, height, color) {
         this.data.push({ x: x, y: y, width: width, height: height, color: color })
     }
 
