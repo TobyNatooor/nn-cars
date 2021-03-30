@@ -4,8 +4,8 @@ export default class Canvas {
         this.canvasID = canvasID
         this.canvas = document.getElementById(this.canvasID)
         this.ctx = this.canvas.getContext('2d')
-        this.canvas.width = window.innerWidth
-        this.canvas.height = 1000
+        this.canvas.width = window.innerWidth * 0.9
+        this.canvas.height = window.innerHeight * 0.7
     }
 
     getMouseCoordsEL() {
@@ -17,9 +17,9 @@ export default class Canvas {
             }
         })
     }
-    showMouseCoords() {
+    showMouseCoords(color) {
         if (this.mouseCoords) {
-            this.ctx.fillStyle = "black";
+            this.ctx.fillStyle = color;
             this.ctx.font = "30px Arial";
             this.ctx.fillText(`X: ${this.mouseCoords.x} Y: ${this.mouseCoords.y}`, 0, this.canvas.height - 5)
         }
