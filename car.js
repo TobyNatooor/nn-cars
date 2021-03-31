@@ -1,15 +1,17 @@
 
 export default class Car {
-    constructor({ canvasID, obstacles, color, height, width, x, y }) {
-        this.height = height ? height : 25
-        this.width = width ? width : 40
-        this.obstacles = obstacles
-        this.carColor = color
+    constructor({ canvasID, obstacles, color, height = 25, width = 40, x = (document.getElementById(canvasID).width / 2), y = (document.getElementById(canvasID).height / 4) }) {
         this.canvas = document.getElementById(canvasID)
         this.ctx = this.canvas.getContext('2d')
+        this.height = height
+        this.width = width
+        this.obstacles = obstacles
+        this.carColor = color
         this.coord = {
-            x: x ? x : this.canvas.width / 2,
-            y: y ? y : 230
+            x: x,
+            y: y,
+            startX: x,
+            startY: y
         }
         this.speed = 0
         this.degrees = 0
@@ -85,7 +87,9 @@ export default class Car {
     drive() {
         if (this.hasHitObstacle()) {
             console.log("obstacle hit!")
-            location.reload()
+            this.degrees = 0
+            this.coord.x = this.coord.startX
+            this.coord.y = this.coord.startY
         } else {
             let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
             let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
