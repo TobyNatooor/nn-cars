@@ -1,25 +1,26 @@
 
 export default class Car {
-    constructor({ canvasID, obstacles, color, height = 25, width = 40, x = (document.getElementById(canvasID).width / 2), y = (document.getElementById(canvasID).height / 4) }) {
+    constructor({ canvasID, obstacles, color, height = 25, width = 40, x = 100, y = 100, brain }) {
         this.canvas = document.getElementById(canvasID)
         this.ctx = this.canvas.getContext('2d')
+        this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()})`
+        this.obstacles = obstacles
         this.height = height
         this.width = width
-        this.obstacles = obstacles
-        this.carColor = color
+        this.brain = brain
+        this.brainInterval = 10 // 6 times per second
         this.coord = {
             x: x,
             y: y,
             startX: x,
             startY: y
         }
-        this.speed = 0
+        this.speed = 5
         this.degrees = 0
         this.turnSpeed = 0
-        this.isDriving = false
+        this.isDead = false
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
-        this.obstacleColor = [190, 110, 110]
     }
 
     getX = (radius, degrees) => this.coord.x + (radius * Math.sin((Math.PI * 2) / 360 * degrees))
@@ -36,7 +37,7 @@ export default class Car {
         this.ctx.lineTo(this.getX(this.radius, this.degrees + 90 - this.angel / 2), this.getY(this.radius, this.degrees + 90 - this.angel / 2)) // front left
         this.ctx.lineTo(this.getX(this.radius, this.degrees + 90 + this.angel / 2), this.getY(this.radius, this.degrees + 90 + this.angel / 2)) // front right
 
-        this.ctx.fillStyle = this.carColor
+        this.ctx.fillStyle = this.color
         this.ctx.fill()
 
         /*  */
@@ -53,6 +54,19 @@ export default class Car {
         //     2, 0, 2 * Math.PI
         // )
         /*  */
+    }
+
+    driveSwitch() {
+        this.speed ? this.speed = 0 : this.speed = 5
+    }
+    turnForward() {
+        this.turnSpeed = 0
+    }
+    turnLeft() {
+        this.turnSpeed = -2
+    }
+    turnRight() {
+        this.turnSpeed = 2
     }
 
     isObstacle(x, y) {
@@ -85,21 +99,34 @@ export default class Car {
     }
 
     drive() {
-        if (this.hasHitObstacle()) {
-            console.log("obstacle hit!")
-            this.degrees = 0
-            this.coord.x = this.coord.startX
-            this.coord.y = this.coord.startY
-        } else {
-            let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
-            let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
+        if (!this.isDead) {
+            if (this.hasHitObstacle()) {
+                console.log("obstacle hit!")
+                // this.degrees = 0
+                // this.coord.x = this.coord.startX
+                // this.coord.y = this.coord.startY
+                this.isDead = true
+            } else {
+                let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
+                let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
 
-            this.coord.x += xAmount
-            this.coord.y += yAmount
-            this.create()
+                this.coord.x += xAmount
+                this.coord.y += yAmount
+                this.create()
+                this.distanceToObstacle()
+            }
         }
     }
 
+    drawDistance(direction) {
+        this.ctx.beginPath()
+        this.ctx.moveTo(this.coord.x, this.coord.y)
+        this.ctx.lineTo(
+            this.getX(direction.distance, this.degrees + direction.degrees),
+            this.getY(direction.distance, this.degrees + direction.degrees)
+        )
+        this.ctx.stroke()
+    }
     distanceToObstacle() {
         this.distances = [
             { degrees: 0, distance: 0 }, // left
@@ -122,21 +149,33 @@ export default class Car {
                     }
                 }
             }
-            this.ctx.beginPath()
-            this.ctx.moveTo(this.coord.x, this.coord.y)
-            this.ctx.lineTo(
-                this.getX(direction.distance, this.degrees + direction.degrees),
-                this.getY(direction.distance, this.degrees + direction.degrees)
-            )
-            this.ctx.stroke()
+            //this.drawDistance(direction)
         })
 
     }
 
+    useBrain() {
+        this.brainInterval++
+        if (this.brainInterval % 5 == 0) {
+            const data = [
+                this.distances[0].distance / this.canvas.width,
+                this.distances[1].distance / this.canvas.width,
+                this.distances[2].distance / this.canvas.width
+            ]
+            const prediction = this.brain.predict(data)
+            if (prediction[0] > 0.5) {
+                this.turnLeft()
+            } else {
+                this.turnRight()
+            }
+        }
+    }
+
     test() {
-        console.table([
-            [this.distances[0].distance, this.distances[1].distance, this.distances[2].distance],
-            ["left", "forward", "right"]
-        ])
+        // console.table([
+        //     [this.distances[0].distance, this.distances[1].distance, this.distances[2].distance],
+        //     ["left", "forward", "right"]
+        // ])
+
     }
 }

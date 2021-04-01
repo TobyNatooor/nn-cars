@@ -2,6 +2,7 @@
 import Canvas from './canvas.js'
 import Car from './car.js'
 import Obstacles from './obstacles.js'
+import NeuralNetwork from './nn.js'
 
 let cvs = new Canvas({
     canvasID: 'theCanvas',
@@ -9,11 +10,23 @@ let cvs = new Canvas({
 let obstacles = new Obstacles({
     canvasID: cvs.canvasID,
 })
-let car = new Car({
-    canvasID: cvs.canvasID,
-    obstacles: obstacles.data,
-    color: 'green',
-})
+
+const carPopulation = 10
+let cars
+function createCarPopulation(numOfCars) {
+    cars = []
+    for (let i = 0; i < numOfCars; i++) {
+        let car = new Car({
+            canvasID: cvs.canvasID,
+            obstacles: obstacles.data,
+            brain: new NeuralNetwork(3, 5, 2),
+            x: cvs.canvas.width / 4,
+            y: cvs.canvas.height / 4,
+        })
+        cars.push(car)
+    }
+}
+createCarPopulation(carPopulation)
 
 cvs.getMouseCoordsEL()
 obstacles.addSquare(0, 0, cvs.canvas.width, 100, 'blue')
@@ -22,29 +35,35 @@ obstacles.addSquare(0, 0, 100, cvs.canvas.height, 'blue')
 obstacles.addSquare(cvs.canvas.width - 100, 0, 100, cvs.canvas.height, 'blue')
 obstacles.addSquare(cvs.canvas.width / 6, cvs.canvas.height / 3, cvs.canvas.width / 1.5, cvs.canvas.height / 3, 'blue')
 
-// button control
-document.getElementById('driveBtn').addEventListener('click', () => { car.speed ? car.speed = 0 : car.speed = 5 })
-document.getElementById('forwardBtn').addEventListener('click', () => { car.turnSpeed = 0 })
-document.getElementById('leftBtn').addEventListener('click', () => { car.turnSpeed = -2 })
-document.getElementById('rightBtn').addEventListener('click', () => { car.turnSpeed = 2 })
-document.getElementById('testBtn').addEventListener('click', () => { car.test() })
+// // button control
+// document.getElementById('driveBtn').addEventListener('click', () => { car.driveSwitch() })
+// document.getElementById('forwardBtn').addEventListener('click', () => { car.turnForward() })
+// document.getElementById('leftBtn').addEventListener('click', () => { car.turnLeft() })
+// document.getElementById('rightBtn').addEventListener('click', () => { car.turnRight() })
+// document.getElementById('testBtn').addEventListener('click', () => { car.test() })
 
 // keyboard control
 document.addEventListener('keydown', (e) => {
     switch (e.code) {
-        case "Space": { car.speed ? car.speed = 0 : car.speed = 5 } break
-        case "KeyW": { car.turnSpeed = 0 } break
-        case "KeyA": { car.turnSpeed = -2 } break
-        case "KeyD": { car.turnSpeed = 2 } break
+        case "Space": { car.driveSwitch() } break
+        case "KeyW": { car.turnForward() } break
+        case "KeyA": { car.turnLeft() } break
+        case "KeyD": { car.turnRight() } break
         case "KeyX": { car.test() } break
         default: break
     }
 })
 
+let deadCars = 0
 function animate() {
+    deadCars = 0
     cvs.clear()
-    car.drive()
-    car.distanceToObstacle()
+    for (const car of cars) {
+        car.drive()
+        car.useBrain()
+        if (car.isDead) deadCars++
+        if (deadCars == carPopulation) createCarPopulation(carPopulation)
+    }
     obstacles.draw()
     cvs.showMouseCoords('white')
     let stopID = window.requestAnimationFrame(animate)
