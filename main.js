@@ -11,7 +11,7 @@ let obstacles = new Obstacles({
     canvasID: cvs.canvasID,
 })
 
-const carPopulation = 10
+const carPopulation = 5
 let cars
 function createCarPopulation(numOfCars) {
     cars = []

@@ -8,7 +8,7 @@ export default class Car {
         this.height = height
         this.width = width
         this.brain = brain
-        this.brainInterval = 10 // 6 times per second
+        this.brainInterval = 0
         this.coord = {
             x: x,
             y: y,
@@ -156,7 +156,7 @@ export default class Car {
 
     useBrain() {
         this.brainInterval++
-        if (this.brainInterval % 5 == 0) {
+        if (this.brainInterval % 10 == 0) {
             const data = [
                 this.distances[0].distance / this.canvas.width,
                 this.distances[1].distance / this.canvas.width,
