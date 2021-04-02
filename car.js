@@ -1,6 +1,6 @@
 
 export default class Car {
-    constructor({ canvasID, obstacles, color, height = 25, width = 40, x = 100, y = 100, brain }) {
+    constructor({ canvasID, obstacles, color, height = 25, width = 40, x = 100, y = 100, brain, index }) {
         this.canvas = document.getElementById(canvasID)
         this.ctx = this.canvas.getContext('2d')
         this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()})`
@@ -8,6 +8,7 @@ export default class Car {
         this.height = height
         this.width = width
         this.brain = brain
+        this.index = index
         this.brainInterval = 0
         this.coord = {
             x: x,
@@ -102,7 +103,6 @@ export default class Car {
         if (!this.isDead) {
             if (this.hasHitObstacle()) {
                 this.isDead = true
-                this.brain.dispose()
             } else {
                 let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
                 let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
@@ -126,9 +126,9 @@ export default class Car {
     }
     distanceToObstacle() {
         this.distances = [
-            { degrees: 0, distance: 0 }, // left
+            { degrees: 45, distance: 0 }, // left
             { degrees: 90, distance: 0 }, // forward
-            { degrees: 180, distance: 0 }, // right
+            { degrees: 135, distance: 0 }, // right
         ]
         this.distances.forEach(direction => {
             let increment = 10
