@@ -153,7 +153,7 @@ export default class Car {
 
     useBrain() {
         this.brainInterval++
-        if (this.brainInterval % 10 == 0) {
+        if (this.brainInterval % 15 == 0) {
             const data = [
                 this.distances[0].distance / this.canvas.width,
                 this.distances[1].distance / this.canvas.width,

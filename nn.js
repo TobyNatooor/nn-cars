@@ -16,7 +16,7 @@ export default class NeuralNetwork {
         })
         if (bestCarWeights) {
             this.model.setWeights(bestCarWeights)
-            this.mutate(0.3)
+            this.mutate(0.2)
         }
     }
 
@@ -36,22 +36,29 @@ export default class NeuralNetwork {
 
     mutate(rate) {
         tf.tidy(() => {
-            const weights = this.model.getWeights();
-            const mutatedWeights = [];
+            const weights = this.model.getWeights()
+            const mutatedWeights = []
             for (let i = 0; i < weights.length; i++) {
-                let tensor = weights[i];
-                let shape = weights[i].shape;
+                let tensor = weights[i]
+                let shape = weights[i].shape
                 let values = tensor.dataSync().slice();
                 for (let j = 0; j < values.length; j++) {
                     if (Math.random() < rate) {
-                        let w = values[j];
-                        values[j] = w + this.randomGau();
+                        let w = values[j]
+                        let newValue = w + this.randomGau()
+                        values[j] = newValue
+                    }
+                    if (values[j] > 1) {
+                        values[j] -= 1
+                    }
+                    if (values[j] < -1) {
+                        values[j] += 1
                     }
                 }
-                let newTensor = tf.tensor(values, shape);
-                mutatedWeights[i] = newTensor;
+                let newTensor = tf.tensor(values, shape)
+                mutatedWeights[i] = newTensor
             }
-            this.model.setWeights(mutatedWeights);
+            this.model.setWeights(mutatedWeights)
         });
     }
 

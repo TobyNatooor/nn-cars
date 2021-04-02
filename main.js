@@ -5,7 +5,7 @@ import Obstacles from './obstacles.js'
 import NeuralNetwork from './nn.js'
 
 const canvasID = 'theCanvas'
-const carPopulation = 30
+const carPopulation = 20
 let cars = []
 let deadCars = 0
 let stopID
@@ -28,8 +28,8 @@ function createCarPopulation(bestCarWeights) {
             brain: new NeuralNetwork(3, 5, 2, bestCarWeights),
             x: cvs.canvas.width / 4,
             y: cvs.canvas.height / 4,
-            height: cvs.canvas.height / 55,
-            width: cvs.canvas.width / 45,
+            height: cvs.canvas.width / 95,
+            width: cvs.canvas.width / 55,
             index: i,
         })
         cars.push(car)
@@ -46,7 +46,7 @@ function getBestCar() {
     }
     if (bestCar.score > bestScore) {
         console.log(bestCar.score)
-        return bestCar
+        return { weights: bestCar.weights, score: bestCar.score }
     }
     let weights = cars[index].brain.getWeights()
     let weightCopies = [];
@@ -73,6 +73,12 @@ function main() {
         if (deadCars == carPopulation) {
             //console.log(tf.memory().numTensors)
             bestCar = getBestCar()
+            document.getElementById('weightsList').innerHTML = ``
+            for (let weight of bestCar.weights) {
+                for (let tensor of weight.dataSync()) {
+                    document.getElementById('weightsList').innerHTML += `<li>${tensor}</li>`
+                }
+            }
             disposeCarBrains()
             createCarPopulation(bestCar.weights)
             for (let i in bestCar.weights) {
