@@ -101,11 +101,8 @@ export default class Car {
     drive() {
         if (!this.isDead) {
             if (this.hasHitObstacle()) {
-                console.log("obstacle hit!")
-                // this.degrees = 0
-                // this.coord.x = this.coord.startX
-                // this.coord.y = this.coord.startY
                 this.isDead = true
+                this.brain.dispose()
             } else {
                 let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
                 let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
@@ -169,13 +166,5 @@ export default class Car {
                 this.turnRight()
             }
         }
-    }
-
-    test() {
-        // console.table([
-        //     [this.distances[0].distance, this.distances[1].distance, this.distances[2].distance],
-        //     ["left", "forward", "right"]
-        // ])
-
     }
 }
