@@ -24,10 +24,12 @@ export default class Obstacles {
     }
 
     createSquareArena() {
-        this.addSquare(0, 0, this.canvas.width, 100, 'blue')
-        this.addSquare(0, this.canvas.height - 100, this.canvas.width, 100, 'blue')
-        this.addSquare(0, 0, 100, this.canvas.height, 'blue')
-        this.addSquare(this.canvas.width - 100, 0, 100, this.canvas.height, 'blue')
+        const BORDERWIDTH = this.canvas.width / 25
+
+        this.addSquare(0, 0, this.canvas.width, BORDERWIDTH, 'blue')
+        this.addSquare(0, 0, BORDERWIDTH, this.canvas.height, 'blue')
+        this.addSquare(0, this.canvas.height - BORDERWIDTH, this.canvas.width, BORDERWIDTH, 'blue')
+        this.addSquare(this.canvas.width - BORDERWIDTH, 0, BORDERWIDTH, this.canvas.height, 'blue')
         this.addSquare(this.canvas.width / 6, this.canvas.height / 3, this.canvas.width / 1.5, this.canvas.height / 3, 'blue')
     }
 }
