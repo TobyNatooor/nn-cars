@@ -126,9 +126,11 @@ export default class Car {
     }
     distanceToObstacle() {
         this.distances = [
-            { degrees: 45, distance: 0 }, // left
+            { degrees: 0, distance: 0 }, // left
+            { degrees: 45, distance: 0 }, // left / forward
             { degrees: 90, distance: 0 }, // forward
-            { degrees: 135, distance: 0 }, // right
+            { degrees: 135, distance: 0 }, // right / forward
+            { degrees: 180, distance: 0 }, // right
         ]
         this.distances.forEach(direction => {
             let increment = 10
@@ -154,11 +156,10 @@ export default class Car {
     useBrain() {
         this.brainInterval++
         if (this.brainInterval % 15 == 0) {
-            const data = [
-                this.distances[0].distance / this.canvas.width,
-                this.distances[1].distance / this.canvas.width,
-                this.distances[2].distance / this.canvas.width
-            ]
+            let data = []
+            for (let distance of this.distances) {
+                data.push(distance.distance / this.canvas.width)
+            }
             const prediction = this.brain.predict(data)
             if (prediction[0] > 0.5) {
                 this.turnLeft()

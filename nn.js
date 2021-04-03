@@ -16,11 +16,11 @@ export default class NeuralNetwork {
         })
         if (bestCarWeights) {
             this.model.setWeights(bestCarWeights)
-            this.mutate(0.2)
+            this.mutate(0.18)
         }
     }
 
-    randomGau() {
+    randomGaussian() {
         let y2 = 0
         let y1, x1, x2, w
         do {
@@ -41,25 +41,18 @@ export default class NeuralNetwork {
             for (let i = 0; i < weights.length; i++) {
                 let tensor = weights[i]
                 let shape = weights[i].shape
-                let values = tensor.dataSync().slice();
+                let values = tensor.dataSync().slice()
                 for (let j = 0; j < values.length; j++) {
                     if (Math.random() < rate) {
                         let w = values[j]
-                        let newValue = w + this.randomGau()
-                        values[j] = newValue
-                    }
-                    if (values[j] > 1) {
-                        values[j] -= 1
-                    }
-                    if (values[j] < -1) {
-                        values[j] += 1
+                        values[j] = w + this.randomGaussian()
                     }
                 }
                 let newTensor = tf.tensor(values, shape)
                 mutatedWeights[i] = newTensor
             }
             this.model.setWeights(mutatedWeights)
-        });
+        })
     }
 
     getWeights = () => this.model.getWeights()

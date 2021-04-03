@@ -24,12 +24,13 @@ export default class Obstacles {
     }
 
     createSquareArena() {
-        const BORDERWIDTH = this.canvas.width / 20
+        const COLOR = 'rgb(45, 103, 173)'
+        const BORDERWIDTH = this.canvas.width / 25
 
-        this.addSquare(0, 0, this.canvas.width, BORDERWIDTH, 'blue')
-        this.addSquare(0, 0, BORDERWIDTH, this.canvas.height, 'blue')
-        this.addSquare(0, this.canvas.height - BORDERWIDTH, this.canvas.width, BORDERWIDTH, 'blue')
-        this.addSquare(this.canvas.width - BORDERWIDTH, 0, BORDERWIDTH, this.canvas.height, 'blue')
-        this.addSquare(this.canvas.width / 4, this.canvas.height / 3, this.canvas.width / 2, this.canvas.height / 3, 'blue')
+        this.addSquare(0, 0, this.canvas.width, BORDERWIDTH, COLOR)
+        this.addSquare(0, 0, BORDERWIDTH, this.canvas.height, COLOR)
+        this.addSquare(0, this.canvas.height - BORDERWIDTH, this.canvas.width, BORDERWIDTH, COLOR)
+        this.addSquare(this.canvas.width - BORDERWIDTH, 0, BORDERWIDTH, this.canvas.height, COLOR)
+        this.addSquare(this.canvas.width / 4, this.canvas.height / 3, this.canvas.width / 2, this.canvas.height / 3, COLOR)
     }
 }
