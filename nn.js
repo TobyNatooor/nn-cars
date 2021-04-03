@@ -16,7 +16,7 @@ export default class NeuralNetwork {
         })
         if (bestCarWeights) {
             this.model.setWeights(bestCarWeights)
-            this.mutate(0.18)
+            this.mutate(0.3)
         }
     }
 

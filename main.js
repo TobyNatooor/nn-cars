@@ -5,7 +5,7 @@ import Obstacles from './obstacles.js'
 import NeuralNetwork from './nn.js'
 
 const canvasID = 'theCanvas'
-const carPopulation = 25
+const carPopulation = 35
 let cars = []
 let deadCars = 0
 let stopID
@@ -26,9 +26,9 @@ function createCarPopulation(bestCarWeights) {
             obstacles: obstacles.data,
             brain: new NeuralNetwork(5, 8, 2, bestCarWeights),
             x: cvs.canvas.width / 4,
-            y: cvs.canvas.height / 4,
-            height: cvs.canvas.width / 115,
-            width: cvs.canvas.width / 75,
+            y: cvs.canvas.height / 4.7,
+            height: cvs.canvas.width / 105,
+            width: cvs.canvas.width / 65,
             index: i,
         })
         cars.push(car)
