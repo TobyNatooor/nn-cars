@@ -16,12 +16,11 @@ export default class NeuralNetwork {
         })
         if (bestCarWeights) {
             this.model.setWeights(bestCarWeights)
-            this.mutate(0.3)
+            this.mutate(0.2)
         }
     }
 
     randomGaussian() {
-        let y2 = 0
         let y1, x1, x2, w
         do {
             x1 = Math.random(2) - 1
@@ -30,7 +29,6 @@ export default class NeuralNetwork {
         } while (w >= 1)
         w = Math.sqrt(-2 * Math.log(w) / w)
         y1 = x1 * w
-        y2 = x2 * w
         return y1
     }
 
@@ -54,8 +52,6 @@ export default class NeuralNetwork {
             this.model.setWeights(mutatedWeights)
         })
     }
-
-    getWeights = () => this.model.getWeights()
 
     predict = (input) => tf.tidy(() => {
         const inputTensor = tf.tensor2d([input])

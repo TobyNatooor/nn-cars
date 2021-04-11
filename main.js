@@ -4,25 +4,25 @@ import Car from './car.js'
 import Obstacles from './obstacles.js'
 import NeuralNetwork from './nn.js'
 
-const canvasID = 'theCanvas'
-const carPopulation = 35
+const CANVASID = 'theCanvas'
+const CARPOPULATION = 30
 let cars = []
 let deadCars = 0
-let stopID
-let index = 0
 let bestCar = { score: 0 }
+let index = 0
+let stopID
 
 let cvs = new Canvas({
-    canvasID: canvasID,
+    canvasID: CANVASID,
 })
 let obstacles = new Obstacles({
-    canvasID: canvasID,
+    canvasID: CANVASID,
 })
 function createCarPopulation(bestCarWeights) {
     cars = []
-    for (let i = 0; i < carPopulation; i++) {
+    for (let i = 0; i < CARPOPULATION; i++) {
         let car = new Car({
-            canvasID: canvasID,
+            canvasID: CANVASID,
             obstacles: obstacles.data,
             brain: new NeuralNetwork(5, 8, 2, bestCarWeights),
             x: cvs.canvas.width / 4,
@@ -38,7 +38,7 @@ createCarPopulation()
 
 function getBestCar() {
     let bestScore = 0
-    for (let car of cars) {
+    for (const car of cars) {
         if (car.brainInterval > bestScore) {
             bestScore = car.brainInterval
             index = car.index
@@ -46,16 +46,16 @@ function getBestCar() {
     }
     let weights
     if (bestScore > bestCar.score) {
-        weights = cars[index].brain.getWeights()
+        weights = cars[index].brain.model.getWeights()
 
-        let weightCopies = [];
-        for (let i = 0; i < weights.length; i++) {
-            weightCopies[i] = weights[i].clone();
+        let weightCopies = []
+        for (const i in weights) {
+            weightCopies[i] = weights[i].clone()
         }
-        for (let i in bestCar.weights) {
+        for (const i in bestCar.weights) {
             bestCar.weights[i].dispose()
         }
-        document.getElementById('highscore').innerHTML += `<li>${bestScore}</li>`
+
         bestCar = { weights: weightCopies, score: bestScore }
     }
 }
@@ -66,28 +66,21 @@ function disposeCarBrains() {
     }
 }
 
-function main() {
+function animate() {
     cvs.clear()
     deadCars = 0
     for (let car of cars) {
         car.drive()
         car.useBrain()
         if (car.isDead) deadCars++
-        if (deadCars == carPopulation) {
-            //console.log(tf.memory().numTensors)
+        if (deadCars == CARPOPULATION) {
+            console.log(tf.memory().numTensors)
             getBestCar()
-            // document.getElementById('weightsList').innerHTML = ``
-            // for (let weight of bestCar.weights) {
-            //     for (let tensor of weight.dataSync()) {
-            //         document.getElementById('weightsList').innerHTML += `<li>${tensor}</li>`
-            //     }
-            // }
             disposeCarBrains()
             createCarPopulation(bestCar.weights)
         }
     }
     obstacles.draw()
-    //cvs.showMouseCoords('white')
-    window.requestAnimationFrame(main)
+    window.requestAnimationFrame(animate)
 }
-main()
+animate()
