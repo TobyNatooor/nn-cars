@@ -1,8 +1,8 @@
 
 export default class Car {
-    constructor({ canvasID, obstacles, color, height = 25, width = 40, x = 100, y = 100, brain, index }) {
-        this.canvas = document.getElementById(canvasID)
-        this.ctx = this.canvas.getContext('2d')
+    constructor({ cvs, obstacles, color, height = 25, width = 40, x = 100, y = 100, brain, index }) {
+        this.canvas = cvs.canvas
+        this.ctx = cvs.ctx
         this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()})`
         this.obstacles = obstacles
         this.height = height
@@ -161,7 +161,7 @@ export default class Car {
                 data.push(distance.distance / this.canvas.width)
             }
             const prediction = this.brain.predict(data)
-            
+
             if (prediction[0] > 0.5) {
                 this.turnLeft()
             } else {

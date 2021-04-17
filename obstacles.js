@@ -1,8 +1,8 @@
 
 export default class Obstacles {
-    constructor({ canvasID }) {
-        this.canvas = document.getElementById(canvasID)
-        this.ctx = this.canvas.getContext('2d')
+    constructor({ cvs }) {
+        this.canvas = cvs.canvas
+        this.ctx = cvs.ctx
         this.test = 0
         this.data = []
 
