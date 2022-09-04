@@ -1,6 +1,6 @@
 
 export default class NeuralNetwork {
-    constructor(inputNodes, hiddenNodes, outputNodes, bestCarWeights) {
+    constructor(inputNodes, hiddenNodes, outputNodes, bestCarWeights, isFirstCar) {
         this.model = tf.sequential({
             layers: [
                 tf.layers.dense({
@@ -16,7 +16,7 @@ export default class NeuralNetwork {
         })
         if (bestCarWeights) {
             this.model.setWeights(bestCarWeights)
-            this.mutate(0.2)
+            if (!isFirstCar) this.mutate(0.2)
         }
     }
 

@@ -1,6 +1,6 @@
 
 export default class Car {
-    constructor({ cvs, obstacles, color, height = 25, width = 40, x = 100, y = 100, brain, index }) {
+    constructor({ cvs, obstacles, color, speed, height = 25, width = 40, x = 100, y = 100, brain, index }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
         this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()})`
@@ -16,7 +16,7 @@ export default class Car {
             startX: x,
             startY: y
         }
-        this.speed = 5
+        this.speed = speed
         this.degrees = 0
         this.turnSpeed = 0
         this.isDead = false
@@ -40,21 +40,6 @@ export default class Car {
 
         this.ctx.fillStyle = this.color
         this.ctx.fill()
-
-        /*  */
-        // // left
-        // this.ctx.arc(
-        //     this.getX(this.degrees + 100 - this.angel / 2),
-        //     this.getY(this.degrees + 90 - this.angel / 2),
-        //     2, 0, 2 * Math.PI
-        // )
-        // // right
-        // this.ctx.arc(
-        //     this.getX(this.degrees + 80 + this.angel / 2),
-        //     this.getY(this.degrees + 90 + this.angel / 2),
-        //     2, 0, 2 * Math.PI
-        // )
-        /*  */
     }
 
     driveSwitch() {
@@ -72,7 +57,7 @@ export default class Car {
 
     isObstacle(x, y) {
         let hit = false
-        this.obstacles.forEach(obstacle => {
+        this.obstacles.squares.forEach(obstacle => {
             if (obstacle.x < x && x < obstacle.x + obstacle.width &&
                 obstacle.y < y && y < obstacle.y + obstacle.height) {
                 hit = true
@@ -148,7 +133,7 @@ export default class Car {
                     }
                 }
             }
-            //this.drawDistance(direction)
+            this.drawDistance(direction)
         })
 
     }

@@ -1,0 +1,7 @@
+make costumisable options for the following:
+    car arena size ✔️
+    car speed ✔️
+    car size 
+    car population
+    car arena map
+    the best car of all time, not just the previous population
