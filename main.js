@@ -1,57 +1,64 @@
-
 import Canvas from './canvas.js'
 import Obstacles from './obstacles.js'
 import CarPopulation from './carPopulation.js'
 
 const CANVASID = 'theCanvas'
-let stopID
-let carPopulation = document.querySelector('#carPopulation')
-let canvasHeight = document.querySelector('#canvasHeight')
-let canvasWidth = document.querySelector('#canvasWidth')
-let carSpeed = document.querySelector('#carSpeed')
+let stopID, canvas, obstacles, carPopulation
+let carPopulationRange = document.querySelector('#carPopulation')
+let canvasHeightRange = document.querySelector('#canvasHeight')
+let canvasWidthRange = document.querySelector('#canvasWidth')
+let carSpeedRange = document.querySelector('#carSpeed')
+let decisionPerIntervalRange = document.querySelector('#decisionPerInterval')
+let displayCarVisionCheckbox = document.querySelector('#displayCarVision')
+let displayMouseCoordsCheckbox = document.querySelector('#displayMouseCoords')
 
+function animate() {
+    canvas.clear()
+    obstacles.draw()
+    carPopulation.drive(displayCarVisionCheckbox.checked)
+    if (displayMouseCoordsCheckbox.checked) canvas.showMouseCoords("black")
+    stopID = window.requestAnimationFrame(animate)
+}
 
 function start() {
-    let canvas = new Canvas({
+    canvas = new Canvas({
         canvasID: CANVASID,
-        canvasHeight: canvasHeight.value,
-        canvasWidth: canvasWidth.value,
+        canvasHeight: canvasHeightRange.value,
+        canvasWidth: canvasWidthRange.value,
     })
-    let obstacles = new Obstacles({
+    obstacles = new Obstacles({
         cvs: canvas,
     })
-    let carPop = new CarPopulation({
+    carPopulation = new CarPopulation({
         cvs: canvas,
-        CarPopulation: carPopulation.value,
+        carPopulation: carPopulationRange.value,
         obstaclesData: obstacles.data,
-        carSpeed: carSpeed.value,
+        carSpeed: carSpeedRange.value,
+        decisionPerInterval: decisionPerIntervalRange.value,
+        isDrawingDistance: displayCarVisionCheckbox.checked,
     })
-
-    function animate() {
-        canvas.clear()
-        carPop.drive()
-        obstacles.draw()
-        canvas.showMouseCoords("black")
-        stopID = window.requestAnimationFrame(animate)
-    }
     animate()
 }
 start()
 
 document.querySelector('#restartButton').addEventListener('click', () => {
     cancelAnimationFrame(stopID)
+    carPopulation.disposeCarBrains()
     start()
 })
 
-carPopulation.addEventListener('input', () => {
-    document.querySelector('#carPopulationLabel').innerHTML = `Car population (${carPopulation.value})`
+carPopulationRange.addEventListener('input', () => {
+    document.querySelector('#carPopulationLabel').innerHTML = `Car population (${carPopulationRange.value})`
 })
-canvasHeight.addEventListener('input', () => {
-    document.querySelector('#canvasHeightLabel').innerHTML = `Canvas height (${canvasHeight.value})`
+canvasHeightRange.addEventListener('input', () => {
+    document.querySelector('#canvasHeightLabel').innerHTML = `Canvas height (${canvasHeightRange.value})`
 })
-canvasWidth.addEventListener('input', () => {
-    document.querySelector('#canvasWidthLabel').innerHTML = `Canvas width (${canvasWidth.value})`
+canvasWidthRange.addEventListener('input', () => {
+    document.querySelector('#canvasWidthLabel').innerHTML = `Canvas width (${canvasWidthRange.value})`
 })
-carSpeed.addEventListener('input', () => {
-    document.querySelector('#carSpeedLabel').innerHTML = `Car speed (${carSpeed.value})`
+carSpeedRange.addEventListener('input', () => {
+    document.querySelector('#carSpeedLabel').innerHTML = `Car speed (${carSpeedRange.value})`
+})
+decisionPerIntervalRange.addEventListener('input', () => {
+    document.querySelector('#decisionPerIntervalLabel').innerHTML = `Decision per frame (${decisionPerIntervalRange.value})`
 })

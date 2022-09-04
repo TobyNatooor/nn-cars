@@ -3,7 +3,7 @@ import Car from './car.js'
 import CarBrain from './carBrain.js'
 
 export default class CarPopulation {
-    constructor({ cvs, obstaclesData, carPopulation = 30, carSpeed = 5 }) {
+    constructor({ cvs, obstaclesData, carPopulation, carSpeed, decisionPerInterval }) {
         this.cvs = cvs
         this.canvas = cvs.canvas
         this.ctx = this.canvas.getContext('2d')
@@ -13,8 +13,9 @@ export default class CarPopulation {
         this.deadCars = 0
         this.bestCar = { score: 0 }
         this.carSpeed = carSpeed
+        this.decisionPerInterval = decisionPerInterval
 
-        this.createCarPopulation()
+        this.createCarPopulation(false)
     }
 
     createCarPopulation(bestCarWeights) {
@@ -22,14 +23,15 @@ export default class CarPopulation {
         for (let i = 0; i < this.carPopulation; i++) {
             let car = new Car({
                 cvs: this.cvs,
-                obstacles: this.obstaclesData,  
-                brain: new CarBrain(5, 8, 2, bestCarWeights, i==0),
+                obstacles: this.obstaclesData,
+                brain: new CarBrain(5, 8, 2, bestCarWeights, (i == 0)),
                 speed: this.carSpeed,
                 x: this.canvas.width / 4,
                 y: this.canvas.height / 4.7,
                 height: this.canvas.width / 105,
                 width: this.canvas.width / 65,
                 index: i,
+                decisionPerInterval: this.decisionPerInterval,
             })
             this.cars.push(car)
         }
@@ -66,14 +68,14 @@ export default class CarPopulation {
         }
     }
 
-    drive() {
+    drive(isDrawingDistance) {
         this.deadCars = 0
         for (let car of this.cars) {
-            car.drive()
+            car.drive(isDrawingDistance)
             car.useBrain()
             if (car.isDead) this.deadCars++
             if (this.deadCars == this.carPopulation) {
-                // console.log(tf.memory().numTensors)
+                console.log(tf.memory().numTensors)
                 this.getBestCar()
                 this.disposeCarBrains()
                 this.createCarPopulation(this.bestCar.weights)

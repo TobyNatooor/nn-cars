@@ -5,7 +5,7 @@ export default class Canvas {
         this.canvas = document.getElementById(this.canvasID)
         this.ctx = this.canvas.getContext('2d')
         this.canvas.width = window.innerWidth * canvasWidth / 100
-        this.canvas.height = window.innerWidth * canvasHeight / 100
+        this.canvas.height = window.innerHeight * canvasHeight / 100
 
         this.getMouseCoordsEL()
     }

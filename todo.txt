@@ -1,7 +1,9 @@
-make costumisable options for the following:
+make costumisable options:
     car arena size ✔️
     car speed ✔️
     car size 
-    car population
+    car population ✔️
     car arena map
-    the best car of all time, not just the previous population
+    choose the best car of all time, not just the previous population
+    add visualisation of neuralnetwork
+    fix the added memory per reset ✔️

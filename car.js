@@ -1,6 +1,6 @@
 
 export default class Car {
-    constructor({ cvs, obstacles, color, speed, height = 25, width = 40, x = 100, y = 100, brain, index }) {
+    constructor({ cvs, obstacles, color, speed, height = 25, width = 40, x = 100, y = 100, brain, index, decisionPerInterval }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
         this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()})`
@@ -9,7 +9,8 @@ export default class Car {
         this.width = width
         this.brain = brain
         this.index = index
-        this.brainInterval = 0
+        this.interval = 0
+        this.decisionPerInterval = decisionPerInterval
         this.coord = {
             x: x,
             y: y,
@@ -84,18 +85,17 @@ export default class Car {
         }
     }
 
-    drive() {
+    drive(isDrawingDistance) {
         if (!this.isDead) {
             if (this.hasHitObstacle()) {
                 this.isDead = true
             } else {
                 let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
                 let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
-
                 this.coord.x += xAmount
                 this.coord.y += yAmount
                 this.create()
-                this.distanceToObstacle()
+                this.distanceToObstacle(isDrawingDistance)
             }
         }
     }
@@ -109,7 +109,8 @@ export default class Car {
         )
         this.ctx.stroke()
     }
-    distanceToObstacle() {
+
+    distanceToObstacle(isDrawingDistance) {
         this.distances = [
             { degrees: 0, distance: 0 }, // left
             { degrees: 45, distance: 0 }, // left / forward
@@ -133,14 +134,13 @@ export default class Car {
                     }
                 }
             }
-            this.drawDistance(direction)
+            if(isDrawingDistance) this.drawDistance(direction)
         })
-
     }
 
     useBrain() {
-        this.brainInterval++
-        if (this.brainInterval % 20 == 0) {
+        this.interval++
+        if (this.interval % this.decisionPerInterval == 0) {
             let data = []
             for (let distance of this.distances) {
                 data.push(distance.distance / this.canvas.width)
