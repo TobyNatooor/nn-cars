@@ -21,12 +21,18 @@ export default class CarPopulation {
 
     createCarPopulation(bestCarWeights = false) {
         // console.log(bestCarWeights);
+        // if (bestCarWeights) {
+        //     for (const bestCarWeight of bestCarWeights) {
+        //         console.log(bestCarWeight.dataSync());
+        //     }
+        // }
         this.cars = []
         for (let i = 0; i < this.carPopulation; i++) {
+            let isFirstCar = (i == 0)
             let car = new Car({
                 cvs: this.cvs,
                 obstacles: this.obstaclesData,
-                brain: new CarBrain(5, 8, 2, bestCarWeights, (i == 0)),
+                brain: new CarBrain(5, 8, 2, bestCarWeights, isFirstCar),
                 speed: this.carSpeed,
                 x: this.canvas.width / 4,
                 y: this.canvas.height / 4.7,
@@ -39,7 +45,7 @@ export default class CarPopulation {
         }
     }
 
-    getBestCar() {
+    /* async */ getBestCar() {
         let bestCarIndex = 0
         for (const car of this.cars) {
             if (car.score > this.bestCarScore) {
@@ -51,7 +57,7 @@ export default class CarPopulation {
         let weights, weightCopies = []
         if (this.bestCarScore >= this.bestCar.score) {
             weights = this.cars[bestCarIndex].brain.model.getWeights()
-            console.log(weights);
+            // console.log(weights);
             for (const i in weights) {
                 weightCopies[i] = weights[i].clone()
             }
@@ -59,6 +65,7 @@ export default class CarPopulation {
                 this.bestCar.weights[i].dispose()
             }
         }
+        // if (this.bestCar.score > 200) await model.save('localstorage://my-model-1');
         return { weights: weightCopies, score: this.bestCarScore }
     }
 

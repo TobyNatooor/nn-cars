@@ -14,11 +14,15 @@ export default class CarBrain {
                 })
             ]
         })
-        // console.log(bestCarWeights);
         if (bestCarWeights != false) {
-            let test = this.model.setWeights(bestCarWeights)
-            console.log(test);
-            if (!isFirstCar) this.mutate(0.2)
+            this.model.setWeights(bestCarWeights)
+            if (!isFirstCar) {
+                this.mutate(0.2)
+            } else {
+                // for (const i in this.model.getWeights()) {
+                //     bestCarWeights[i].equal(this.model.getWeights()[i]).print()
+                // }
+            }
         }
     }
 

@@ -11,4 +11,5 @@ todo:
         add visualisation of neuralnetwork
         fix the added memory per reset ✔️
         Make size and speed ajustable without restarting
+        adjustable mutationrate
     
