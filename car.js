@@ -9,8 +9,8 @@ export default class Car {
         this.width = width
         this.brain = brain
         this.index = index
-        this.interval = 0
-        this.decisionPerInterval = decisionPerInterval
+        this.score = 0
+        this.decisionInterval = decisionPerInterval
         this.coord = {
             x: x,
             y: y,
@@ -139,8 +139,8 @@ export default class Car {
     }
 
     useBrain() {
-        this.interval++
-        if (this.interval % this.decisionPerInterval == 0) {
+        this.score++
+        if (this.score % this.decisionInterval == 0) {
             let data = []
             for (let distance of this.distances) {
                 data.push(distance.distance / this.canvas.width)

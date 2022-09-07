@@ -12,13 +12,15 @@ export default class CarPopulation {
         this.carPopulation = carPopulation
         this.deadCars = 0
         this.bestCar = { score: 0 }
+        this.bestCarScore = 0
         this.carSpeed = carSpeed
         this.decisionPerInterval = decisionPerInterval
 
-        this.createCarPopulation(false)
+        this.createCarPopulation()
     }
 
-    createCarPopulation(bestCarWeights) {
+    createCarPopulation(bestCarWeights = false) {
+        // console.log(bestCarWeights);
         this.cars = []
         for (let i = 0; i < this.carPopulation; i++) {
             let car = new Car({
@@ -38,28 +40,26 @@ export default class CarPopulation {
     }
 
     getBestCar() {
-        let bestScore = 0
-        let index = 0
+        let bestCarIndex = 0
         for (const car of this.cars) {
-            if (car.brainInterval > bestScore) {
-                bestScore = car.brainInterval
-                index = car.index
+            if (car.score > this.bestCarScore) {
+                this.bestCarScore = car.score
+                bestCarIndex = car.index
+                console.log("New highscore: ", car.score);
             }
         }
-        let weights
-        if (bestScore > this.bestCar.score) {
-            weights = this.cars[index].brain.model.getWeights()
-
-            let weightCopies = []
+        let weights, weightCopies = []
+        if (this.bestCarScore >= this.bestCar.score) {
+            weights = this.cars[bestCarIndex].brain.model.getWeights()
+            console.log(weights);
             for (const i in weights) {
                 weightCopies[i] = weights[i].clone()
             }
             for (const i in this.bestCar.weights) {
                 this.bestCar.weights[i].dispose()
             }
-
-            this.bestCar = { weights: weightCopies, score: bestScore }
         }
+        return { weights: weightCopies, score: this.bestCarScore }
     }
 
     disposeCarBrains() {
@@ -75,8 +75,9 @@ export default class CarPopulation {
             car.useBrain()
             if (car.isDead) this.deadCars++
             if (this.deadCars == this.carPopulation) {
-                console.log(tf.memory().numTensors)
-                this.getBestCar()
+                // console.log(tf.memory().numTensors)
+                this.bestCar = this.getBestCar()
+                console.log(this.bestCar);
                 this.disposeCarBrains()
                 this.createCarPopulation(this.bestCar.weights)
             }
