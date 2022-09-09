@@ -146,7 +146,6 @@ export default class Car {
                 data.push(distance.distance / this.canvas.width)
             }
             const prediction = this.brain.predict(data)
-
             if (prediction[0] > 0.5) {
                 this.turnLeft()
             } else {

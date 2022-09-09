@@ -3,13 +3,9 @@ todo:
         choose the best car of all time, not just the previous population
 
     low priority:
-        car arena size ✔️
-        car speed ✔️
         car size 
-        car population ✔️
         car arena map
         add visualisation of neuralnetwork
-        fix the added memory per reset ✔️
         Make size and speed ajustable without restarting
         adjustable mutationrate
     

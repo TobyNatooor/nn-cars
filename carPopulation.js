@@ -55,9 +55,10 @@ export default class CarPopulation {
             }
         }
         let weights, weightCopies = []
-        if (this.bestCarScore >= this.bestCar.score) {
+        if (this.bestCarScore > this.bestCar.score) {
             weights = this.cars[bestCarIndex].brain.model.getWeights()
             // console.log(weights);
+            // check for faster method
             for (const i in weights) {
                 weightCopies[i] = weights[i].clone()
             }
@@ -70,14 +71,14 @@ export default class CarPopulation {
     }
 
     disposeCarBrains() {
-        for (let car of this.cars) {
+        for (const car of this.cars) {
             car.brain.dispose()
         }
     }
 
     drive(isDrawingDistance) {
         this.deadCars = 0
-        for (let car of this.cars) {
+        for (const car of this.cars) {
             car.drive(isDrawingDistance)
             car.useBrain()
             if (car.isDead) this.deadCars++

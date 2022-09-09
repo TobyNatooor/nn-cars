@@ -2,15 +2,17 @@ import Canvas from './canvas.js'
 import Obstacles from './obstacles.js'
 import CarPopulation from './carPopulation.js'
 
+const carPopulationRange = document.querySelector('#carPopulation')
+const canvasHeightRange = document.querySelector('#canvasHeight')
+const canvasWidthRange = document.querySelector('#canvasWidth')
+const carSpeedRange = document.querySelector('#carSpeed')
+const decisionPerIntervalRange = document.querySelector('#decisionPerInterval')
+const displayCarVisionCheckbox = document.querySelector('#displayCarVision')
+const displayMouseCoordsCheckbox = document.querySelector('#displayMouseCoords')
 const CANVASID = 'theCanvas'
+
 let stopID, canvas, obstacles, carPopulation
-let carPopulationRange = document.querySelector('#carPopulation')
-let canvasHeightRange = document.querySelector('#canvasHeight')
-let canvasWidthRange = document.querySelector('#canvasWidth')
-let carSpeedRange = document.querySelector('#carSpeed')
-let decisionPerIntervalRange = document.querySelector('#decisionPerInterval')
-let displayCarVisionCheckbox = document.querySelector('#displayCarVision')
-let displayMouseCoordsCheckbox = document.querySelector('#displayMouseCoords')
+let isAnimating = true
 
 function animate() {
     canvas.clear()
@@ -42,9 +44,18 @@ function start() {
 start()
 
 document.querySelector('#restartButton').addEventListener('click', () => {
+    if (isAnimating) {
+        cancelAnimationFrame(stopID)
+        carPopulation.disposeCarBrains()
+    } 
+    start()
+    isAnimating = true
+})
+
+document.querySelector('#stopButton').addEventListener('click', () => {
     cancelAnimationFrame(stopID)
     carPopulation.disposeCarBrains()
-    start()
+    isAnimating = false
 })
 
 carPopulationRange.addEventListener('input', () => {
