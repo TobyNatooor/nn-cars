@@ -45,28 +45,29 @@ export default class CarPopulation {
         }
     }
 
-    /* async */ getBestCar() {
-        let bestCarIndex = 0
-        for (const car of this.cars) {
-            if (car.score > this.bestCarScore) {
-                this.bestCarScore = car.score
-                bestCarIndex = car.index
-                console.log("New highscore: ", car.score);
+    getBestCar() {
+        let bestCarIndex, newBestCarFound = false
+        for (let i = 0; i < this.cars.length; i++) {
+            if (this.bestCarScore < this.cars[i].score) {
+                this.bestCarScore = this.cars[i].score
+                bestCarIndex = this.cars[i].index
+                newBestCarFound = true
+                console.log("New highscore: ", this.cars[i].score);
             }
         }
+        if (!newBestCarFound) return this.bestCar
+
         let weights, weightCopies = []
-        if (this.bestCarScore > this.bestCar.score) {
-            weights = this.cars[bestCarIndex].brain.model.getWeights()
-            // console.log(weights);
-            // check for faster method
-            for (const i in weights) {
-                weightCopies[i] = weights[i].clone()
-            }
-            for (const i in this.bestCar.weights) {
+        weights = this.cars[bestCarIndex].brain.model.getWeights()
+
+        for (let i = 0; i < weights.length; i++) {
+            weightCopies[i] = weights[i].clone()
+        }
+        if (this.bestCar.weights) {
+            for (let i = 0; i < this.bestCar.weights.length; i++) {
                 this.bestCar.weights[i].dispose()
             }
         }
-        // if (this.bestCar.score > 200) await model.save('localstorage://my-model-1');
         return { weights: weightCopies, score: this.bestCarScore }
     }
 
