@@ -142,8 +142,8 @@ export default class Car {
         this.score++
         if (this.score % this.decisionInterval == 0) {
             let data = []
-            for (let distance of this.distances) {
-                data.push(distance.distance / this.canvas.width)
+            for (let i = 0; i < this.distances.length; i++) {
+                data.push(this.distances[i].distance / this.canvas.width)
             }
             const prediction = this.brain.predict(data)
             if (prediction[0] > 0.5) {

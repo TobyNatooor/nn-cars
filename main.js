@@ -58,18 +58,23 @@ document.querySelector('#stopButton').addEventListener('click', () => {
     isAnimating = false
 })
 
+document.querySelector('#carPopulationLabel').innerHTML = `Car population (${carPopulationRange.value})`
 carPopulationRange.addEventListener('input', () => {
     document.querySelector('#carPopulationLabel').innerHTML = `Car population (${carPopulationRange.value})`
 })
+document.querySelector('#canvasHeightLabel').innerHTML = `Canvas height (${canvasHeightRange.value})`
 canvasHeightRange.addEventListener('input', () => {
     document.querySelector('#canvasHeightLabel').innerHTML = `Canvas height (${canvasHeightRange.value})`
 })
+document.querySelector('#canvasWidthLabel').innerHTML = `Canvas width (${canvasWidthRange.value})`
 canvasWidthRange.addEventListener('input', () => {
     document.querySelector('#canvasWidthLabel').innerHTML = `Canvas width (${canvasWidthRange.value})`
 })
+document.querySelector('#carSpeedLabel').innerHTML = `Car speed (${carSpeedRange.value})`
 carSpeedRange.addEventListener('input', () => {
     document.querySelector('#carSpeedLabel').innerHTML = `Car speed (${carSpeedRange.value})`
 })
+document.querySelector('#decisionPerIntervalLabel').innerHTML = `Decision per frame (${decisionPerIntervalRange.value})`
 decisionPerIntervalRange.addEventListener('input', () => {
     document.querySelector('#decisionPerIntervalLabel').innerHTML = `Decision per frame (${decisionPerIntervalRange.value})`
 })

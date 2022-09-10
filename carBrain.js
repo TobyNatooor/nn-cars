@@ -16,18 +16,8 @@ export default class CarBrain {
         })
         if (bestCarWeights != false) {
             this.model.setWeights(bestCarWeights)
-            // this.mutate(0.2)
-
-            // for (const i in this.model.getWeights()) {
-            //     bestCarWeights[i].equal(this.model.getWeights()[i]).print()
-            // }
-
             if (!isFirstCar) {
                 this.mutate(0.2)
-            } else {
-                // for (const i in this.model.getWeights()) {
-                //     bestCarWeights[i].equal(this.model.getWeights()[i]).print()
-                // }
             }
         }
     }
