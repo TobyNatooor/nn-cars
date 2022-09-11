@@ -39,7 +39,7 @@ function start() {
         carSpeed: carSpeedRange.value,
         framesPerDecision: framesPerDecisionRange.value,
         isDrawingDistance: displayCarVisionCheckbox.checked,
-        mutationRate: mutationRateRange,
+        mutationRate: mutationRateRange.value,
     })
     animate()
 }
