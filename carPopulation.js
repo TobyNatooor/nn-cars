@@ -41,23 +41,21 @@ export default class CarPopulation {
     getBestCar() {
         let bestCarIndex = 0
         let newBestCarFound = false
+        let carIndexScore = []
         for (let i = 0; i < this.cars.length; i++) {
-            if (this.bestCar.score < this.cars[i].score /* &&
-                this.cars[bestCarIndex].score < this.cars[i].score */) {
+            carIndexScore.push({ index: this.cars[i].index, score: this.cars[i].score })
+            if (this.bestCar.score < this.cars[i].score) {
                 this.bestCar.score = this.cars[i].score
                 bestCarIndex = this.cars[i].index
                 newBestCarFound = true
-                console.log("New highscore: ", this.cars[i].score);
             }
         }
-
+        console.log("New highscore: ", this.cars[bestCarIndex].score);
         if (!newBestCarFound) {
             return this.bestCar
         } else {
             let weights, weightCopies = []
             weights = this.cars[bestCarIndex].brain.model.getWeights()
-            // console.log(weights[0].dataSync());
-            console.log("index: ", bestCarIndex);
 
             if (this.bestCar.weights) {
                 for (let i = 0; i < this.bestCar.weights.length; i++) {
@@ -67,7 +65,6 @@ export default class CarPopulation {
             for (let i = 0; i < weights.length; i++) {
                 weightCopies[i] = weights[i].clone()
             }
-
             return { weights: weightCopies, score: this.cars[bestCarIndex].score }
         }
     }
@@ -81,9 +78,12 @@ export default class CarPopulation {
     drive(isDrawingDistance) {
         this.deadCars = 0
         for (const car of this.cars) {
-            car.drive(isDrawingDistance)
-            car.useBrain()
-            if (car.isDead) this.deadCars++
+            if (car.isDead) {
+                this.deadCars++
+            } else {
+                car.drive(isDrawingDistance)
+                car.useBrain()
+            }
             if (this.deadCars == this.carPopulation) {
                 console.log('numTensors: ', tf.memory().numTensors)
                 this.bestCar = this.getBestCar()
