@@ -6,7 +6,7 @@ const carPopulationRange = document.querySelector('#carPopulation')
 const canvasHeightRange = document.querySelector('#canvasHeight')
 const canvasWidthRange = document.querySelector('#canvasWidth')
 const carSpeedRange = document.querySelector('#carSpeed')
-const decisionPerIntervalRange = document.querySelector('#decisionPerInterval')
+const framesPerDecisionRange = document.querySelector('#framesPerDecision')
 const displayCarVisionCheckbox = document.querySelector('#displayCarVision')
 const displayMouseCoordsCheckbox = document.querySelector('#displayMouseCoords')
 const CANVASID = 'theCanvas'
@@ -36,7 +36,7 @@ function start() {
         carPopulation: carPopulationRange.value,
         obstaclesData: obstacles.data,
         carSpeed: carSpeedRange.value,
-        decisionPerInterval: decisionPerIntervalRange.value,
+        framesPerDecision: framesPerDecisionRange.value,
         isDrawingDistance: displayCarVisionCheckbox.checked,
     })
     animate()
@@ -74,7 +74,7 @@ document.querySelector('#carSpeedLabel').innerHTML = `Car speed (${carSpeedRange
 carSpeedRange.addEventListener('input', () => {
     document.querySelector('#carSpeedLabel').innerHTML = `Car speed (${carSpeedRange.value})`
 })
-document.querySelector('#decisionPerIntervalLabel').innerHTML = `Decision per frame (${decisionPerIntervalRange.value})`
-decisionPerIntervalRange.addEventListener('input', () => {
-    document.querySelector('#decisionPerIntervalLabel').innerHTML = `Decision per frame (${decisionPerIntervalRange.value})`
+document.querySelector('#framesPerDecisionLabel').innerHTML = `Frames per decision (${framesPerDecisionRange.value})`
+framesPerDecisionRange.addEventListener('input', () => {
+    document.querySelector('#framesPerDecisionLabel').innerHTML = `Frames per decision (${framesPerDecisionRange.value})`
 })

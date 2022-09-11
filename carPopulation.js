@@ -2,17 +2,17 @@ import Car from './car.js'
 import CarBrain from './carBrain.js'
 
 export default class CarPopulation {
-    constructor({ cvs, obstaclesData, carPopulation, carSpeed, decisionPerInterval }) {
+    constructor({ cvs, obstaclesData, carPopulation, carSpeed, framesPerDecision }) {
         this.cvs = cvs
         this.canvas = cvs.canvas
         this.ctx = this.canvas.getContext('2d')
-        this.cars = []
-        this.obstaclesData = obstaclesData
         this.carPopulation = carPopulation
+        this.cars = []
         this.deadCars = 0
-        this.bestCar = { weights: [], score: 0 }
         this.carSpeed = carSpeed
-        this.decisionPerInterval = decisionPerInterval
+        this.bestCar = { weights: [], score: 0 }
+        this.obstaclesData = obstaclesData
+        this.framesPerDecision = framesPerDecision
 
         this.createCarPopulation()
     }
@@ -31,7 +31,7 @@ export default class CarPopulation {
                 height: this.canvas.width / 105,
                 width: this.canvas.width / 65,
                 index: i,
-                decisionPerInterval: this.decisionPerInterval,
+                framesPerDecision: this.framesPerDecision,
             })
             this.cars.push(car)
         }
@@ -41,19 +41,17 @@ export default class CarPopulation {
     getBestCar() {
         let bestCarIndex = 0
         let newBestCarFound = false
-        let carIndexScore = []
         for (let i = 0; i < this.cars.length; i++) {
-            carIndexScore.push({ index: this.cars[i].index, score: this.cars[i].score })
             if (this.bestCar.score < this.cars[i].score) {
                 this.bestCar.score = this.cars[i].score
                 bestCarIndex = this.cars[i].index
                 newBestCarFound = true
             }
         }
-        console.log("New highscore: ", this.cars[bestCarIndex].score);
         if (!newBestCarFound) {
             return this.bestCar
         } else {
+            console.log("New highscore: ", this.cars[bestCarIndex].score);
             let weights, weightCopies = []
             weights = this.cars[bestCarIndex].brain.model.getWeights()
 

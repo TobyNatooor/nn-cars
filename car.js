@@ -1,16 +1,18 @@
 
 export default class Car {
-    constructor({ cvs, obstacles, color, speed, height = 25, width = 40, x = 100, y = 100, brain, index, decisionPerInterval }) {
+    constructor({ cvs, obstacles, color, speed, height = 25, width = 40, x = 100, y = 100, brain, index, framesPerDecision }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
-        this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()}, ${(Math.random() * 255).toFixed()})`
+        this.color = color ? color : `rgb(${(Math.random()*255).toFixed()}, 
+                                          ${(Math.random()*255).toFixed()}, 
+                                          ${(Math.random()*255).toFixed()})`
         this.obstacles = obstacles
         this.height = height
         this.width = width
         this.brain = brain
         this.index = index
         this.score = 0
-        this.decisionInterval = decisionPerInterval
+        this.framesPerDecision = framesPerDecision
         this.coord = {
             x: x,
             y: y,
@@ -134,13 +136,13 @@ export default class Car {
                     }
                 }
             }
-            if(isDrawingDistance) this.drawDistance(direction)
+            if (isDrawingDistance) this.drawDistance(direction)
         })
     }
 
     useBrain() {
         this.score++
-        if (this.score % this.decisionInterval == 0) {
+        if (this.score % this.framesPerDecision == 0) {
             let data = []
             for (let i = 0; i < this.distances.length; i++) {
                 data.push(this.distances[i].distance / this.canvas.width)

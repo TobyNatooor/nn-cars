@@ -1,11 +1,9 @@
 todo:
     high priority:
-        choose the best car of all time, not just the previous population
 
     low priority:
-        run update range values on start
-        car size 
-        car arena map
+        customizable car size
+        customizable car arena map
         add visualisation of neuralnetwork
         Make size and speed ajustable without restarting
         adjustable mutationrate
