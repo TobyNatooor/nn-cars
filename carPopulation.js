@@ -2,7 +2,7 @@ import Car from './car.js'
 import CarBrain from './carBrain.js'
 
 export default class CarPopulation {
-    constructor({ cvs, obstaclesData, carPopulation, carSpeed, framesPerDecision, mutationRate }) {
+    constructor({ cvs, obstaclesData, carPopulation, carSpeed, framesPerDecision, mutationRate, populationNumberElement }) {
         this.cvs = cvs
         this.canvas = cvs.canvas
         this.ctx = this.canvas.getContext('2d')
@@ -14,6 +14,8 @@ export default class CarPopulation {
         this.obstaclesData = obstaclesData
         this.framesPerDecision = framesPerDecision
         this.mutationRate = mutationRate
+        this.populationNumberElement = populationNumberElement
+        this.populationNumber = 0
 
         this.createCarPopulation()
     }
@@ -38,6 +40,8 @@ export default class CarPopulation {
             this.cars.push(car)
         }
         this.cars[0].color = "rgb(255, 0, 0)"
+        this.populationNumber++
+        this.populationNumberElement.innerHTML = `Population number: ${this.populationNumber}`
     }
 
     getBestCar() {

@@ -10,6 +10,7 @@ const framesPerDecisionRange = document.querySelector('#framesPerDecision')
 const mutationRateRange = document.querySelector('#mutationRate')
 const displayCarVisionCheckbox = document.querySelector('#displayCarVision')
 const displayMouseCoordsCheckbox = document.querySelector('#displayMouseCoords')
+const populationNumberElement = document.querySelector('#populationNumber')
 const CANVASID = 'theCanvas'
 
 let stopID, canvas, obstacles, carPopulation
@@ -40,6 +41,7 @@ function start() {
         framesPerDecision: framesPerDecisionRange.value,
         isDrawingDistance: displayCarVisionCheckbox.checked,
         mutationRate: mutationRateRange.value,
+        populationNumberElement: populationNumberElement,
     })
     animate()
 }
