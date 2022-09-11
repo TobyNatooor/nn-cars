@@ -2,11 +2,12 @@ import Canvas from './canvas.js'
 import Obstacles from './obstacles.js'
 import CarPopulation from './carPopulation.js'
 
-const carPopulationRange = document.querySelector('#carPopulation')
 const canvasHeightRange = document.querySelector('#canvasHeight')
 const canvasWidthRange = document.querySelector('#canvasWidth')
+const carPopulationRange = document.querySelector('#carPopulation')
 const carSpeedRange = document.querySelector('#carSpeed')
 const framesPerDecisionRange = document.querySelector('#framesPerDecision')
+const mutationRateRange = document.querySelector('#mutationRate')
 const displayCarVisionCheckbox = document.querySelector('#displayCarVision')
 const displayMouseCoordsCheckbox = document.querySelector('#displayMouseCoords')
 const CANVASID = 'theCanvas'
@@ -38,6 +39,7 @@ function start() {
         carSpeed: carSpeedRange.value,
         framesPerDecision: framesPerDecisionRange.value,
         isDrawingDistance: displayCarVisionCheckbox.checked,
+        mutationRate: mutationRateRange,
     })
     animate()
 }
@@ -63,10 +65,6 @@ document.querySelector('#startStopButton').addEventListener('click', () => {
     document.querySelector('#startStopButton').innerText = isAnimating ? "Stop" : "Start"
 })
 
-document.querySelector('#carPopulationLabel').innerText = `Car population (${carPopulationRange.value})`
-carPopulationRange.addEventListener('input', () => {
-    document.querySelector('#carPopulationLabel').innerText = `Car population (${carPopulationRange.value})`
-})
 document.querySelector('#canvasHeightLabel').innerText = `Canvas height (${canvasHeightRange.value})`
 canvasHeightRange.addEventListener('input', () => {
     document.querySelector('#canvasHeightLabel').innerText = `Canvas height (${canvasHeightRange.value})`
@@ -75,6 +73,10 @@ document.querySelector('#canvasWidthLabel').innerText = `Canvas width (${canvasW
 canvasWidthRange.addEventListener('input', () => {
     document.querySelector('#canvasWidthLabel').innerText = `Canvas width (${canvasWidthRange.value})`
 })
+document.querySelector('#carPopulationLabel').innerText = `Car population (${carPopulationRange.value})`
+carPopulationRange.addEventListener('input', () => {
+    document.querySelector('#carPopulationLabel').innerText = `Car population (${carPopulationRange.value})`
+})
 document.querySelector('#carSpeedLabel').innerText = `Car speed (${carSpeedRange.value})`
 carSpeedRange.addEventListener('input', () => {
     document.querySelector('#carSpeedLabel').innerText = `Car speed (${carSpeedRange.value})`
@@ -82,4 +84,8 @@ carSpeedRange.addEventListener('input', () => {
 document.querySelector('#framesPerDecisionLabel').innerText = `Frames per decision (${framesPerDecisionRange.value})`
 framesPerDecisionRange.addEventListener('input', () => {
     document.querySelector('#framesPerDecisionLabel').innerText = `Frames per decision (${framesPerDecisionRange.value})`
+})
+document.querySelector('#mutationRateLabel').innerText = `Mutation rate (${mutationRateRange.value})`
+mutationRateRange.addEventListener('input', () => {
+    document.querySelector('#mutationRateLabel').innerText = `Mutation rate (${mutationRateRange.value})`
 })

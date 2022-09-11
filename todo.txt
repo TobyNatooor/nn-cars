@@ -1,10 +1,10 @@
 todo:
     high priority:
+        add visualisation of neuralnetwork
+        customizable input, output and hidden nodes
+        add population counter
 
     low priority:
         customizable car size
         customizable car arena map
-        add visualisation of neuralnetwork
-        Make size and speed ajustable without restarting
-        adjustable mutationrate
-    
+

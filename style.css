@@ -4,16 +4,18 @@
     box-sizing: border-box;
 }
 
-canvas {
-    border: 2px solid black;
-}
-
 .center {
     text-align: center;
 }
 
+.settings-background {
+    
+    padding: 1rem 0 1rem 0;
+    margin-bottom: 0.5rem;
+    background-color: rgb(45, 103, 173);
+}
+
 .settings {
-    margin: 2rem 0 1rem 0;
     display: flex;
     justify-content: center;
 }
@@ -23,10 +25,11 @@ canvas {
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-auto-flow: column;
     column-gap: 1rem;
+    row-gap: 0.2rem;
 }
 
 .checkboxes {
-    margin-left: 1rem;
+    margin: auto 0 auto 1rem;
 }
 
 .checkbox {

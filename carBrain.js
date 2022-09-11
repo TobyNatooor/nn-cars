@@ -1,6 +1,6 @@
 
 export default class CarBrain {
-    constructor(inputNodes, hiddenNodes, outputNodes, bestCarWeights = false, isFirstCar = false) {
+    constructor(inputNodes, hiddenNodes, outputNodes, mutationRate, bestCarWeights = false, isFirstCar = false) {
         this.model = tf.sequential({
             layers: [
                 tf.layers.dense({
@@ -17,7 +17,7 @@ export default class CarBrain {
         if (bestCarWeights != false) {
             this.model.setWeights(bestCarWeights)
             if (!isFirstCar) {
-                this.mutate(0.2)
+                this.mutate(mutationRate)
             }
         }
     }
