@@ -5,50 +5,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js" defer></script>
     <!-- https://js.tensorflow.org/api/latest/ -->
     <script type="module" src="main.js"></script>
     <title>Car Evolution</title>
     <style>
-        * {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-        }
-
-        canvas {
-            border: 2px solid black;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .settings {
-            margin-top: 2rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .ranges {
-            width: 20vw;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .checkboxes {
-            margin-left: 1rem;
-            width: 20vw;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        button {
-            padding: 0.2rem 1rem;
-            margin: 0.2rem;
-        }
     </style>
 </head>
 
@@ -65,23 +27,22 @@
             <input type="range" id="carPopulation" min="1" max="80" value="10">
             <label id="framesPerDecisionLabel"></label>
             <input type="range" id="framesPerDecision" min="1" max="30" value="15">
-            <br>
-            <p>(restart to apply settings)</p>
         </div>
         <div class="checkboxes">
-            <div>
+            <div class="checkbox">
                 <input type="checkbox" id="displayCarVision">
                 <label id="displayCarVisionLabel">Display car vision</label>
             </div>
-            <div>
+            <div class="checkbox">
                 <input type="checkbox" id="displayMouseCoords">
                 <label id="displayMouseCoordsLabel">Display mouse coordinates</label>
             </div>
         </div>
     </div>
     <div class="center">
+        <p>(restart to apply settings)</p>
         <button id="restartButton">Restart</button>
-        <button id="stopButton">Stop</button>
+        <button id="startStopButton">Stop</button>
         <br>
         <canvas id="theCanvas"></canvas>
     </div>
