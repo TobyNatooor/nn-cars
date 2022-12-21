@@ -17,16 +17,12 @@ export default class CarBrain {
         if (bestCarWeights != false) {
             this.model.setWeights(bestCarWeights)
             if (!isFirstCar) {
-                this.mutate(mutationRate)
+                this.mutate(mutationRate, mutationAmount)
             }
         }
     }
 
-    randomValue() {
-        return Math.random()
-    }
-
-    mutate(rate) {
+    mutate(rate, amount) {
         tf.tidy(() => {
             const weights = this.model.getWeights()
             const mutatedWeights = []
@@ -37,7 +33,7 @@ export default class CarBrain {
                 for (let j = 0; j < values.length; j++) {
                     if (Math.random() < rate) {
                         let w = values[j]
-                        values[j] = w + this.randomValue()
+                        values[j] = w + Math.random() * amount
                     }
                 }
                 let newTensor = tf.tensor(values, shape)

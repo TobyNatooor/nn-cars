@@ -35,7 +35,9 @@ export default class CarPopulation {
 
     drawDistances() {
         for (let i = 0; i < this.cars.length; i++) {
-            this.cars[i].drawDistances()
+            if (!this.cars[i].isDead) {
+                this.cars[i].drawDistances()
+            }
         }
     }
 
@@ -47,7 +49,7 @@ export default class CarPopulation {
             let car = new Car({
                 cvs: this.cvs,
                 obstacles: this.obstaclesData,
-                brain: new CarBrain(5, 1, 2, this.mutationRate, bestCarWeights, isFirstCar),
+                brain: new CarBrain(5, 3, 2, this.mutationRate, bestCarWeights, isFirstCar),
                 speed: this.carSpeed,
                 x: this.cvs.canvas.width * 0.25,
                 y: this.cvs.canvas.height * 0.2,
