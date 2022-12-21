@@ -19,7 +19,9 @@ let isAnimating = true
 function animate() {
     canvas.clear()
     obstacles.draw()
-    carPopulation.drive(displayCarVisionCheckbox.checked)
+    carPopulation.drive()
+    carPopulation.draw()
+    if (displayCarVisionCheckbox.checked) carPopulation.drawDistances()
     if (displayMouseCoordsCheckbox.checked) canvas.showMouseCoords("black")
     stopID = window.requestAnimationFrame(animate)
 }

@@ -6,25 +6,30 @@ export default class Car {
         this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, 
                                           ${(Math.random() * 255).toFixed()}, 
                                           ${(Math.random() * 255).toFixed()})`
+        this.framesPerDecision = framesPerDecision
         this.obstacles = obstacles
         this.height = height
         this.width = width
         this.brain = brain
         this.index = index
-        this.score = 0
-        this.framesPerDecision = framesPerDecision
+        this.speed = speed
         this.coord = {
             x: x,
             y: y,
-            startX: x,
-            startY: y
         }
-        this.speed = speed
+        this.isDead = false
         this.degrees = 0
         this.turnSpeed = 0
-        this.isDead = false
+        this.score = 0
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
-        this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
+        this.angle = Math.acos((this.width / 2) / this.radius) / (Math.PI / 180)
+        this.distances = [
+            { degrees: 0, distance: 0 },    // left
+            { degrees: 45, distance: 0 },   // left / forward
+            { degrees: 90, distance: 0 },   // forward
+            { degrees: 135, distance: 0 },  // right / forward
+            { degrees: 180, distance: 0 },  // right
+        ]
     }
 
     getX = (radius, degrees) => this.coord.x + (radius * Math.sin((Math.PI * 2) / 360 * degrees))
@@ -32,30 +37,19 @@ export default class Car {
 
     draw() {
         this.degrees += this.turnSpeed
-        this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
-        this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
 
         this.ctx.beginPath()
-        this.ctx.moveTo(this.getX(this.radius, this.degrees - 90 - this.angel / 2), this.getY(this.radius, this.degrees - 90 - this.angel / 2)) // back right
-        this.ctx.lineTo(this.getX(this.radius, this.degrees - 90 + this.angel / 2), this.getY(this.radius, this.degrees - 90 + this.angel / 2)) // back left
-        this.ctx.lineTo(this.getX(this.radius, this.degrees + 90 - this.angel / 2), this.getY(this.radius, this.degrees + 90 - this.angel / 2)) // front left
-        this.ctx.lineTo(this.getX(this.radius, this.degrees + 90 + this.angel / 2), this.getY(this.radius, this.degrees + 90 + this.angel / 2)) // front right
+        let degreesBackRight = this.degrees - 90 - this.angle
+        let degreesBackLeft = this.degrees - 90 + this.angle
+        let degreesFrontLeft = this.degrees + 90 - this.angle
+        let degreesFrontRight = this.degrees + 90 + this.angle
+        this.ctx.moveTo(this.getX(this.radius, degreesBackRight), this.getY(this.radius, degreesBackRight))     // back right
+        this.ctx.lineTo(this.getX(this.radius, degreesBackLeft), this.getY(this.radius, degreesBackLeft))       // back left
+        this.ctx.lineTo(this.getX(this.radius, degreesFrontLeft), this.getY(this.radius, degreesFrontLeft))     // front left
+        this.ctx.lineTo(this.getX(this.radius, degreesFrontRight), this.getY(this.radius, degreesFrontRight))   // front right
 
         this.ctx.fillStyle = this.color
         this.ctx.fill()
-    }
-
-    driveSwitch() {
-        this.speed ? this.speed = 0 : this.speed = 5
-    }
-    turnForward() {
-        this.turnSpeed = 0
-    }
-    turnLeft() {
-        this.turnSpeed = -2
-    }
-    turnRight() {
-        this.turnSpeed = 2
     }
 
     coordHitObstacle(coord) {
@@ -69,89 +63,80 @@ export default class Car {
     }
 
     hasHitObstacle() {
-        let frontLeft = {
-            x: this.getX(this.radius, this.degrees + 100 - this.angel / 2),
-            y: this.getY(this.radius, this.degrees + 90 - this.angel / 2)
-        }
-        let frontRight = {
-            x: this.getX(this.radius, this.degrees + 80 + this.angel / 2),
-            y: this.getY(this.radius, this.degrees + 90 + this.angel / 2)
-        }
-
-        if (this.coordHitObstacle(frontLeft) ||
-            this.coordHitObstacle(frontRight)) {
+        if (this.coordHitObstacle({ // front left coord
+            x: this.getX(this.radius, this.degrees + 100 - this.angle),
+            y: this.getY(this.radius, this.degrees + 90 - this.angle)
+        }) ||
+            this.coordHitObstacle({ // front right coord
+                x: this.getX(this.radius, this.degrees + 80 + this.angle),
+                y: this.getY(this.radius, this.degrees + 90 + this.angle)
+            })) {
             return true
         }
         return false
     }
 
-    drive(isDrawingDistance) {
-        if (!this.isDead) {
-            if (this.hasHitObstacle()) {
-                this.isDead = true
-            } else {
-                let xAmount = (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
-                let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
-                this.coord.x += xAmount
-                this.coord.y += yAmount
-                this.draw()
-                this.distanceToObstacle(isDrawingDistance)
+    drive() {
+        if (this.isDead) {
+            return
+        }
+        else if (this.hasHitObstacle()) {
+            this.isDead = true
+        } else {
+            this.coord.x += (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
+            this.coord.y += (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
+            this.distanceToObstacle()
+        }
+    }
+
+    drawDistances() {
+        for (let i = 0; i < this.distances.length; i++) {
+            this.ctx.beginPath()
+            this.ctx.moveTo(this.coord.x, this.coord.y)
+            this.ctx.lineTo(
+                this.getX(this.distances[i].distance, this.degrees + this.distances[i].degrees),
+                this.getY(this.distances[i].distance, this.degrees + this.distances[i].degrees))
+            this.ctx.stroke()
+        }
+    }
+
+    distanceToObstacle() {
+        for (let i = 0; i < this.distances.length; i++) {
+            this.distances[i].distance = 0
+            let distanceFound = false
+            while (!distanceFound) {
+                this.distances[i].distance += 10
+                if (this.coordHitObstacle({
+                    x: this.getX(this.distances[i].distance, this.degrees + this.distances[i].degrees),
+                    y: this.getY(this.distances[i].distance, this.degrees + this.distances[i].degrees)
+                })) {
+                    while (this.coordHitObstacle({
+                        x: this.getX(this.distances[i].distance, this.degrees + this.distances[i].degrees),
+                        y: this.getY(this.distances[i].distance, this.degrees + this.distances[i].degrees)
+                    })) {
+                        this.distances[i].distance -= 1
+                    }
+                    distanceFound = true
+                }
             }
         }
     }
 
-    drawDistance(direction) {
-        this.ctx.beginPath()
-        this.ctx.moveTo(this.coord.x, this.coord.y)
-        this.ctx.lineTo(
-            this.getX(direction.distance, this.degrees + direction.degrees),
-            this.getY(direction.distance, this.degrees + direction.degrees)
-        )
-        this.ctx.stroke()
-    }
-
-    distanceToObstacle(isDrawingDistance) {
-        this.distances = [
-            { degrees: 0, distance: 0 },    // left
-            { degrees: 45, distance: 0 },   // left / forward
-            { degrees: 90, distance: 0 },   // forward
-            { degrees: 135, distance: 0 },  // right / forward
-            { degrees: 180, distance: 0 },  // right
-        ]
-        this.distances.forEach(direction => {
-            let increment = 20
-            let distanceNotFound = true
-            while (distanceNotFound) {
-                direction.distance += increment
-                if (this.coordHitObstacle({
-                    x: this.getX(direction.distance, this.degrees + direction.degrees),
-                    y: this.getY(direction.distance, this.degrees + direction.degrees)
-                })) {
-                    if (increment > 1) {
-                        direction.distance -= increment
-                        increment = 1
-                    } else {
-                        distanceNotFound = false
-                    }
-                }
-            }
-            if (isDrawingDistance) this.drawDistance(direction)
-        })
-    }
-
     useBrain() {
         this.score++
-        if (this.score % this.framesPerDecision == 0) {
-            let data = []
-            for (let i = 0; i < this.distances.length; i++) {
-                data.push(this.distances[i].distance / this.canvas.width)
-            }
-            const prediction = this.brain.predict(data)
-            if (prediction[0] > 0.5) {
-                this.turnLeft()
-            } else {
-                this.turnRight()
-            }
+        if (this.score % this.framesPerDecision != 0) {
+            return
+        }
+
+        let data = []
+        for (let i = 0; i < this.distances.length; i++) {
+            data.push(this.distances[i].distance)
+        }
+        const prediction = this.brain.predict(data)
+        if (prediction[0] > 0.5) {
+            this.turnSpeed = -2
+        } else {
+            this.turnSpeed = 2
         }
     }
 }

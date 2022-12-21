@@ -23,7 +23,7 @@ export default class CarBrain {
     }
 
     randomValue() {
-        return Math.random() * 2 - 1
+        return Math.random()
     }
 
     mutate(rate) {

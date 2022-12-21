@@ -3,7 +3,7 @@ export default class Obstacles {
     constructor({ cvs }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
-        this.data = {squares: [], pointblocks: []}
+        this.data = { squares: [], pointblocks: [] }
 
         this.createSquareArena()
     }
@@ -22,21 +22,17 @@ export default class Obstacles {
         this.addSquare(this.canvas.width / 4, this.canvas.height / 3, this.canvas.width / 2, this.canvas.height / 3, COLOR)
     }
 
-    addPointblock(x, y) {
-        this.data.pointblocks.push({x: x, y: y})
-    }
-
-    createCurvyArena() {
-
-    }
-
     draw() {
-        this.data.squares.forEach(obstacle => {
+        for (let i = 0; i < this.data.squares.length; i++) {
             this.ctx.beginPath()
-            this.ctx.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height)
+            this.ctx.rect(
+                this.data.squares[i].x,
+                this.data.squares[i].y,
+                this.data.squares[i].width,
+                this.data.squares[i].height)
             this.ctx.closePath()
-            this.ctx.fillStyle = obstacle.color
+            this.ctx.fillStyle = this.data.squares[i].color
             this.ctx.fill()
-        })
+        }
     }
 }

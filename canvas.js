@@ -4,13 +4,13 @@ export default class Canvas {
         this.canvasID = canvasID
         this.canvas = document.getElementById(this.canvasID)
         this.ctx = this.canvas.getContext('2d')
-        this.canvas.width = window.innerWidth * canvasWidth / 100
-        this.canvas.height = window.innerHeight * canvasHeight / 100
+        this.canvas.width = window.innerWidth * canvasWidth 
+        this.canvas.height = window.innerHeight * canvasHeight
 
-        this.getMouseCoordsEL()
+        this.updateMouseCoords()
     }
 
-    getMouseCoordsEL() {
+    updateMouseCoords() {
         this.canvas.addEventListener('mousemove', (e) => {
             const rect = this.canvas.getBoundingClientRect()
             this.mouseCoords = {
