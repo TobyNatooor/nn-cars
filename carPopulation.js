@@ -27,7 +27,7 @@ export default class CarPopulation {
             let car = new Car({
                 cvs: this.cvs,
                 obstacles: this.obstaclesData,
-                brain: new CarBrain(5, 8, 2, this.mutationRate, bestCarWeights, isFirstCar),
+                brain: new CarBrain(5, 3, 2, this.mutationRate, bestCarWeights, isFirstCar),
                 speed: this.carSpeed,
                 x: this.canvas.width / 4,
                 y: this.canvas.height / 4.7,

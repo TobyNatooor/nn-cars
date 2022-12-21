@@ -3,9 +3,9 @@ export default class Car {
     constructor({ cvs, obstacles, color, speed, height = 25, width = 40, x = 100, y = 100, brain, index, framesPerDecision }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
-        this.color = color ? color : `rgb(${(Math.random()*255).toFixed()}, 
-                                          ${(Math.random()*255).toFixed()}, 
-                                          ${(Math.random()*255).toFixed()})`
+        this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, 
+                                          ${(Math.random() * 255).toFixed()}, 
+                                          ${(Math.random() * 255).toFixed()})`
         this.obstacles = obstacles
         this.height = height
         this.width = width
@@ -30,7 +30,7 @@ export default class Car {
     getX = (radius, degrees) => this.coord.x + (radius * Math.sin((Math.PI * 2) / 360 * degrees))
     getY = (radius, degrees) => this.coord.y - (radius * Math.cos((Math.PI * 2) / 360 * degrees))
 
-    create() {
+    draw() {
         this.degrees += this.turnSpeed
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angel = (Math.acos((this.width / 2) / this.radius) * 2) / (Math.PI / 180)
@@ -58,15 +58,14 @@ export default class Car {
         this.turnSpeed = 2
     }
 
-    isObstacle(x, y) {
-        let hit = false
-        this.obstacles.squares.forEach(obstacle => {
-            if (obstacle.x < x && x < obstacle.x + obstacle.width &&
-                obstacle.y < y && y < obstacle.y + obstacle.height) {
-                hit = true
+    coordHitObstacle(coord) {
+        for (let i = 0; i < this.obstacles.squares.length; i++) {
+            if (this.obstacles.squares[i].x < coord.x && coord.x < this.obstacles.squares[i].x + this.obstacles.squares[i].width &&
+                this.obstacles.squares[i].y < coord.y && coord.y < this.obstacles.squares[i].y + this.obstacles.squares[i].height) {
+                return true
             }
-        })
-        return hit
+        }
+        return false
     }
 
     hasHitObstacle() {
@@ -79,12 +78,11 @@ export default class Car {
             y: this.getY(this.radius, this.degrees + 90 + this.angel / 2)
         }
 
-        if (this.isObstacle(frontLeft.x, frontLeft.y) ||
-            this.isObstacle(frontRight.x, frontRight.y)) {
+        if (this.coordHitObstacle(frontLeft) ||
+            this.coordHitObstacle(frontRight)) {
             return true
-        } else {
-            return false
         }
+        return false
     }
 
     drive(isDrawingDistance) {
@@ -96,7 +94,7 @@ export default class Car {
                 let yAmount = (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
                 this.coord.x += xAmount
                 this.coord.y += yAmount
-                this.create()
+                this.draw()
                 this.distanceToObstacle(isDrawingDistance)
             }
         }
@@ -114,20 +112,21 @@ export default class Car {
 
     distanceToObstacle(isDrawingDistance) {
         this.distances = [
-            { degrees: 0, distance: 0 }, // left
-            { degrees: 45, distance: 0 }, // left / forward
-            { degrees: 90, distance: 0 }, // forward
-            { degrees: 135, distance: 0 }, // right / forward
-            { degrees: 180, distance: 0 }, // right
+            { degrees: 0, distance: 0 },    // left
+            { degrees: 45, distance: 0 },   // left / forward
+            { degrees: 90, distance: 0 },   // forward
+            { degrees: 135, distance: 0 },  // right / forward
+            { degrees: 180, distance: 0 },  // right
         ]
         this.distances.forEach(direction => {
             let increment = 20
             let distanceNotFound = true
             while (distanceNotFound) {
                 direction.distance += increment
-                if (this.isObstacle(
-                    this.getX(direction.distance, this.degrees + direction.degrees),
-                    this.getY(direction.distance, this.degrees + direction.degrees))) {
+                if (this.coordHitObstacle({
+                    x: this.getX(direction.distance, this.degrees + direction.degrees),
+                    y: this.getY(direction.distance, this.degrees + direction.degrees)
+                })) {
                     if (increment > 1) {
                         direction.distance -= increment
                         increment = 1

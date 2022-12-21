@@ -22,16 +22,8 @@ export default class CarBrain {
         }
     }
 
-    randomGaussian() {
-        let y1, x1, x2, w
-        do {
-            x1 = Math.random(2) - 1
-            x2 = Math.random(2) - 1
-            w = x1 * x1 + x2 * x2
-        } while (w >= 1)
-        w = Math.sqrt(-2 * Math.log(w) / w)
-        y1 = x1 * w
-        return y1
+    randomValue() {
+        return Math.random() * 2 - 1
     }
 
     mutate(rate) {
@@ -45,7 +37,7 @@ export default class CarBrain {
                 for (let j = 0; j < values.length; j++) {
                     if (Math.random() < rate) {
                         let w = values[j]
-                        values[j] = w + this.randomGaussian()
+                        values[j] = w + this.randomValue()
                     }
                 }
                 let newTensor = tf.tensor(values, shape)
@@ -57,8 +49,7 @@ export default class CarBrain {
 
     predict = (input) => tf.tidy(() => {
         const inputTensor = tf.tensor2d([input])
-        const prediction = this.model.predict(inputTensor).dataSync()
-        return prediction
+        return this.model.predict(inputTensor).dataSync()
     })
 
     dispose() {
