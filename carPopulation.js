@@ -2,18 +2,20 @@ import Car from './car.js'
 import CarBrain from './carBrain.js'
 
 export default class CarPopulation {
-    constructor({ cvs, obstaclesData, carPopulation, carSpeed, framesPerDecision, mutationRate, populationNumberElement }) {
+    constructor({ cvs, obstacles, carPopulation, carSpeed, framesPerDecision, mutationRate, mutationAmount, hiddenNeurons }) {
         this.cvs = cvs
         this.ctx = cvs.ctx
         this.carSpeed = carSpeed
-        this.carPopulation = carPopulation
-        this.obstaclesData = obstaclesData
-        this.framesPerDecision = framesPerDecision
+        this.obstacles = obstacles
         this.mutationRate = mutationRate
-        this.populationNumberElement = populationNumberElement
+        this.mutationAmount = mutationAmount
+        this.hiddenNeurons = hiddenNeurons
+        this.carPopulation = carPopulation
+        this.framesPerDecision = framesPerDecision
 
         this.cars = []
-        this.populationNumber = 0
+        this.deadCars = 0
+        this.generation = 0
         this.bestCar = { weights: [], score: 0 }
 
         this.createCarPopulation()
@@ -43,28 +45,33 @@ export default class CarPopulation {
 
     createCarPopulation(bestCarWeights = false) {
         this.cars = []
+        let coord = {
+            x: this.cvs.canvas.width * 0.25,
+            y: this.cvs.canvas.height * 0.2
+        }
+        let height = (this.cvs.canvas.width * 0.01).toFixed()
+        let width = (this.cvs.canvas.width * 0.02).toFixed()
+
         for (let i = 0; i < this.carPopulation; i++) {
             let isFirstCar = (i == 0)
 
             let car = new Car({
                 cvs: this.cvs,
-                obstacles: this.obstaclesData,
-                brain: new CarBrain(5, 3, 2, this.mutationRate, bestCarWeights, isFirstCar),
+                obstacles: this.obstacles,
+                brain: new CarBrain(5, this.hiddenNeurons, 2, this.mutationRate, bestCarWeights, isFirstCar, this.mutationAmount),
                 speed: this.carSpeed,
-                x: this.cvs.canvas.width * 0.25,
-                y: this.cvs.canvas.height * 0.2,
-                height: this.cvs.canvas.width * 0.008,
-                width: this.cvs.canvas.width * 0.015,
-                index: i,
-                framesPerDecision: this.framesPerDecision,
+                x: coord.x,
+                y: coord.y,
+                height: height,
+                width: width,
                 mutationRate: this.mutationRate,
+                framesPerDecision: this.framesPerDecision,
             })
             this.cars.push(car)
         }
 
-        this.cars[0].color = "rgb(255, 0, 0)"
-        this.populationNumber++
-        this.populationNumberElement.innerHTML = `Population number: ${this.populationNumber}`
+        this.cars[0].color = "rgb(0, 0, 0)"
+        this.generation++
     }
 
     getBestCar() {
@@ -73,7 +80,7 @@ export default class CarPopulation {
         for (let i = 0; i < this.cars.length; i++) {
             if (this.bestCar.score < this.cars[i].score) {
                 this.bestCar.score = this.cars[i].score
-                bestCarI = this.cars[i].index
+                bestCarI = i
                 newBestCarFound = true
             }
         }
@@ -96,22 +103,26 @@ export default class CarPopulation {
         return { weights: weightCopies, score: this.cars[bestCarI].score }
     }
 
+    newGeneration() {
+        this.bestCar = this.getBestCar()
+        this.disposeCarBrains()
+        this.createCarPopulation(this.bestCar.weights)
+
+        console.log('numTensors: ', tf.memory().numTensors)
+    }
+
     drive() {
-        let deadCars = 0
+        this.deadCars = 0
         for (let i = 0; i < this.cars.length; i++) {
             if (this.cars[i].isDead) {
-                deadCars++
+                this.deadCars++
             } else {
                 this.cars[i].useBrain()
                 this.cars[i].drive()
             }
         }
-        if (deadCars == this.carPopulation) {
-            this.bestCar = this.getBestCar()
-            this.disposeCarBrains()
-            this.createCarPopulation(this.bestCar.weights)
-
-            console.log('numTensors: ', tf.memory().numTensors)
+        if (this.deadCars == this.carPopulation) {
+            this.newGeneration()
         }
     }
 }

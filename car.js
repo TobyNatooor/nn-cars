@@ -1,52 +1,55 @@
 
 export default class Car {
-    constructor({ cvs, obstacles, color, speed, height = 25, width = 40, x = 100, y = 100, brain, index, framesPerDecision }) {
+    constructor({ cvs, obstacles, color, speed, height, width, x, y, brain, framesPerDecision }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
         this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, 
                                           ${(Math.random() * 255).toFixed()}, 
                                           ${(Math.random() * 255).toFixed()})`
-        this.framesPerDecision = framesPerDecision
-        this.obstacles = obstacles
         this.height = height
         this.width = width
         this.brain = brain
-        this.index = index
-        this.speed = speed
         this.coord = {
             x: x,
             y: y,
         }
+        this.speed = speed
+        this.obstacles = obstacles
+        this.framesPerDecision = framesPerDecision
         this.isDead = false
         this.degrees = 0
+        this.turnRate = 2
         this.turnSpeed = 0
         this.score = 0
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angle = Math.acos((this.width / 2) / this.radius) / (Math.PI / 180)
-        this.distances = [
-            { degrees: 0, distance: 0 },    // left
-            { degrees: 45, distance: 0 },   // left / forward
-            { degrees: 90, distance: 0 },   // forward
-            { degrees: 135, distance: 0 },  // right / forward
-            { degrees: 180, distance: 0 },  // right
-        ]
+        // left, left-forward, forward, right-forward, right
+        this.inputAngles = [0, 45, 90, 135, 180]
+        this.inputDistances = []
+        for (let i = 0; i < this.inputAngles.length; i++)
+            this.inputDistances.push(0)
     }
 
-    getX = (radius, degrees) => this.coord.x + (radius * Math.sin((Math.PI * 2) / 360 * degrees))
-    getY = (radius, degrees) => this.coord.y - (radius * Math.cos((Math.PI * 2) / 360 * degrees))
+    getCoords(radius, degrees) {
+        let radians = degrees * Math.PI / 180
+        return {
+            x: this.coord.x + radius * Math.sin(radians),
+            y: this.coord.y - radius * Math.cos(radians),
+        }
+    }
 
     draw() {
         this.degrees += this.turnSpeed
 
         this.ctx.beginPath()
-        let degreesBackRight = this.degrees - 90 - this.angle
-        let degreesBackLeft = this.degrees - 90 + this.angle
-        let degreesFrontLeft = this.degrees + 90 - this.angle
-        let degreesFrontRight = this.degrees + 90 + this.angle
-        this.ctx.moveTo(this.getX(this.radius, degreesBackRight), this.getY(this.radius, degreesBackRight))     // back right
-        this.ctx.lineTo(this.getX(this.radius, degreesBackLeft), this.getY(this.radius, degreesBackLeft))       // back left
-        this.ctx.lineTo(this.getX(this.radius, degreesFrontLeft), this.getY(this.radius, degreesFrontLeft))     // front left
-        this.ctx.lineTo(this.getX(this.radius, degreesFrontRight), this.getY(this.radius, degreesFrontRight))   // front right
+        let coordsBackRight = this.getCoords(this.radius, this.degrees - 90 - this.angle)
+        let coordsBackLeft = this.getCoords(this.radius, this.degrees - 90 + this.angle)
+        let coordsFrontLeft = this.getCoords(this.radius, this.degrees + 90 - this.angle)
+        let coordsFrontRight = this.getCoords(this.radius, this.degrees + 90 + this.angle)
+        this.ctx.moveTo(coordsBackRight.x, coordsBackRight.y)     // back right
+        this.ctx.lineTo(coordsBackLeft.x, coordsBackLeft.y)       // back left
+        this.ctx.lineTo(coordsFrontLeft.x, coordsFrontLeft.y)     // front left
+        this.ctx.lineTo(coordsFrontRight.x, coordsFrontRight.y)   // front right
 
         this.ctx.fillStyle = this.color
         this.ctx.fill()
@@ -63,14 +66,9 @@ export default class Car {
     }
 
     hasHitObstacle() {
-        if (this.coordHitObstacle({ // front left coord
-            x: this.getX(this.radius, this.degrees + 100 - this.angle),
-            y: this.getY(this.radius, this.degrees + 90 - this.angle)
-        }) ||
-            this.coordHitObstacle({ // front right coord
-                x: this.getX(this.radius, this.degrees + 80 + this.angle),
-                y: this.getY(this.radius, this.degrees + 90 + this.angle)
-            })) {
+        if (this.coordHitObstacle(this.getCoords(this.radius, this.degrees + 90 - this.angle)) ||   // front left car coord 
+            this.coordHitObstacle(this.getCoords(this.radius, this.degrees + 90 + this.angle))      // front right car coord
+        ) {
             return true
         }
         return false
@@ -79,42 +77,35 @@ export default class Car {
     drive() {
         if (this.isDead) {
             return
-        }
-        else if (this.hasHitObstacle()) {
+        } else if (this.hasHitObstacle()) {
             this.isDead = true
         } else {
-            this.coord.x += (Math.cos(2 * Math.PI * (this.degrees / 360))) * this.speed
-            this.coord.y += (Math.sin(2 * Math.PI * (this.degrees / 360))) * this.speed
-            this.distanceToObstacle()
+            let radians = this.degrees * Math.PI / 180
+            this.coord.x += Math.cos(radians) * this.speed
+            this.coord.y += Math.sin(radians) * this.speed
+            this.updateDistanceToObstacle()
         }
     }
 
     drawDistances() {
-        for (let i = 0; i < this.distances.length; i++) {
+        for (let i = 0; i < this.inputDistances.length; i++) {
+            let lineEndCoords = this.getCoords(this.inputDistances[i], this.degrees + this.inputAngles[i])
             this.ctx.beginPath()
             this.ctx.moveTo(this.coord.x, this.coord.y)
-            this.ctx.lineTo(
-                this.getX(this.distances[i].distance, this.degrees + this.distances[i].degrees),
-                this.getY(this.distances[i].distance, this.degrees + this.distances[i].degrees))
+            this.ctx.lineTo(lineEndCoords.x, lineEndCoords.y)
             this.ctx.stroke()
         }
     }
 
-    distanceToObstacle() {
-        for (let i = 0; i < this.distances.length; i++) {
-            this.distances[i].distance = 0
+    updateDistanceToObstacle() {
+        for (let i = 0; i < this.inputDistances.length; i++) {
+            this.inputDistances[i] = 0
             let distanceFound = false
             while (!distanceFound) {
-                this.distances[i].distance += 10
-                if (this.coordHitObstacle({
-                    x: this.getX(this.distances[i].distance, this.degrees + this.distances[i].degrees),
-                    y: this.getY(this.distances[i].distance, this.degrees + this.distances[i].degrees)
-                })) {
-                    while (this.coordHitObstacle({
-                        x: this.getX(this.distances[i].distance, this.degrees + this.distances[i].degrees),
-                        y: this.getY(this.distances[i].distance, this.degrees + this.distances[i].degrees)
-                    })) {
-                        this.distances[i].distance -= 1
+                this.inputDistances[i] += 10
+                if (this.coordHitObstacle(this.getCoords(this.inputDistances[i], this.degrees + this.inputAngles[i]))) {
+                    while (this.coordHitObstacle(this.getCoords(this.inputDistances[i], this.degrees + this.inputAngles[i]))) {
+                        this.inputDistances[i] -= 1
                     }
                     distanceFound = true
                 }
@@ -128,15 +119,11 @@ export default class Car {
             return
         }
 
-        let data = []
-        for (let i = 0; i < this.distances.length; i++) {
-            data.push(this.distances[i].distance)
-        }
-        const prediction = this.brain.predict(data)
-        if (prediction[0] > 0.5) {
-            this.turnSpeed = -2
+        const prediction = this.brain.predict(this.inputDistances)
+        if (prediction[0] < 0.5) {
+            this.turnSpeed = -this.turnRate
         } else {
-            this.turnSpeed = 2
+            this.turnSpeed = this.turnRate
         }
     }
 }

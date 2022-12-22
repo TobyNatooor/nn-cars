@@ -1,6 +1,6 @@
 
 export default class CarBrain {
-    constructor(inputNodes, hiddenNodes, outputNodes, mutationRate, bestCarWeights = false, isFirstCar = false) {
+    constructor(inputNodes, hiddenNodes, outputNodes, mutationRate, bestCarWeights = false, isFirstCar = false, mutationAmount) {
         this.model = tf.sequential({
             layers: [
                 tf.layers.dense({
@@ -17,6 +17,8 @@ export default class CarBrain {
         if (bestCarWeights != false) {
             this.model.setWeights(bestCarWeights)
             if (!isFirstCar) {
+                // console.log(mutationRate);
+                // console.log(mutationAmount);
                 this.mutate(mutationRate, mutationAmount)
             }
         }
@@ -32,8 +34,7 @@ export default class CarBrain {
                 let values = tensor.dataSync().slice()
                 for (let j = 0; j < values.length; j++) {
                     if (Math.random() < rate) {
-                        let w = values[j]
-                        values[j] = w + Math.random() * amount
+                        values[j] += Math.random() * amount
                     }
                 }
                 let newTensor = tf.tensor(values, shape)

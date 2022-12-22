@@ -2,15 +2,15 @@ import Canvas from './canvas.js'
 import Obstacles from './obstacles.js'
 import CarPopulation from './carPopulation.js'
 
-const canvasHeightRange = document.querySelector('#canvasHeight')
-const canvasWidthRange = document.querySelector('#canvasWidth')
 const carPopulationRange = document.querySelector('#carPopulation')
 const carSpeedRange = document.querySelector('#carSpeed')
 const framesPerDecisionRange = document.querySelector('#framesPerDecision')
 const mutationRateRange = document.querySelector('#mutationRate')
 const displayCarVisionCheckbox = document.querySelector('#displayCarVision')
 const displayMouseCoordsCheckbox = document.querySelector('#displayMouseCoords')
-const populationNumberElement = document.querySelector('#populationNumber')
+const generationLabel = document.querySelector('#populationNumber')
+const mutationAmountRange = document.querySelector('#mutationAmount')
+const hiddenNeuronsRange = document.querySelector('#hiddenNeurons')
 const CANVASID = 'theCanvas'
 
 let stopID, canvas, obstacles, carPopulation
@@ -21,30 +21,27 @@ function animate() {
     obstacles.draw()
     carPopulation.drive()
     carPopulation.draw()
+    if (carPopulation.deadCars == carPopulation.carPopulation) generationLabel.innerHTML = `Generation: ${carPopulation.generation}`
     if (displayCarVisionCheckbox.checked) carPopulation.drawDistances()
     if (displayMouseCoordsCheckbox.checked) canvas.showMouseCoords("black")
     stopID = window.requestAnimationFrame(animate)
 }
 
 function start() {
-    canvas = new Canvas({
-        canvasID: CANVASID,
-        canvasHeight: canvasHeightRange.value,
-        canvasWidth: canvasWidthRange.value,
-    })
-    obstacles = new Obstacles({
-        cvs: canvas,
-    })
+    canvas = new Canvas({ canvasID: CANVASID, })
+    obstacles = new Obstacles({ cvs: canvas, })
     carPopulation = new CarPopulation({
         cvs: canvas,
-        carPopulation: carPopulationRange.value,
-        obstaclesData: obstacles.data,
-        carSpeed: carSpeedRange.value,
-        framesPerDecision: framesPerDecisionRange.value,
+        obstacles: obstacles.data,
         isDrawingDistance: displayCarVisionCheckbox.checked,
-        mutationRate: mutationRateRange.value,
-        populationNumberElement: populationNumberElement,
+        carPopulation: parseInt(carPopulationRange.value),
+        carSpeed: parseFloat(carSpeedRange.value),
+        framesPerDecision: parseInt(framesPerDecisionRange.value),
+        hiddenNeurons: parseInt(hiddenNeuronsRange.value),
+        mutationRate: parseFloat(mutationRateRange.value),
+        mutationAmount: parseFloat(mutationAmountRange.value),
     })
+    generationLabel.innerHTML = `Generation: ${carPopulation.generation}`
     animate()
 }
 start()
@@ -69,14 +66,11 @@ document.querySelector('#startStopButton').addEventListener('click', () => {
     document.querySelector('#startStopButton').innerText = isAnimating ? "Stop" : "Start"
 })
 
-document.querySelector('#canvasHeightLabel').innerText = `Canvas height (${canvasHeightRange.value})`
-canvasHeightRange.addEventListener('input', () => {
-    document.querySelector('#canvasHeightLabel').innerText = `Canvas height (${canvasHeightRange.value})`
+document.querySelector('#killAllButton').addEventListener('click', () => {
+    carPopulation.newGeneration()
+    generationLabel.innerHTML = `Generation: ${carPopulation.generation}`
 })
-document.querySelector('#canvasWidthLabel').innerText = `Canvas width (${canvasWidthRange.value})`
-canvasWidthRange.addEventListener('input', () => {
-    document.querySelector('#canvasWidthLabel').innerText = `Canvas width (${canvasWidthRange.value})`
-})
+
 document.querySelector('#carPopulationLabel').innerText = `Car population (${carPopulationRange.value})`
 carPopulationRange.addEventListener('input', () => {
     document.querySelector('#carPopulationLabel').innerText = `Car population (${carPopulationRange.value})`
@@ -92,4 +86,12 @@ framesPerDecisionRange.addEventListener('input', () => {
 document.querySelector('#mutationRateLabel').innerText = `Mutation rate (${mutationRateRange.value})`
 mutationRateRange.addEventListener('input', () => {
     document.querySelector('#mutationRateLabel').innerText = `Mutation rate (${mutationRateRange.value})`
+})
+document.querySelector('#mutationAmountLabel').innerText = `Mutation amount (${mutationAmountRange.value})`
+mutationAmountRange.addEventListener('input', () => {
+    document.querySelector('#mutationAmountLabel').innerText = `Mutation amount (${mutationAmountRange.value})`
+})
+document.querySelector('#hiddenNeuronsLabel').innerText = `Hidden neurons (${hiddenNeuronsRange.value})`
+hiddenNeuronsRange.addEventListener('input', () => {
+    document.querySelector('#hiddenNeuronsLabel').innerText = `Hidden neurons (${hiddenNeuronsRange.value})`
 })
