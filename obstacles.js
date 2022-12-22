@@ -19,7 +19,7 @@ export default class Obstacles {
         this.addSquare(0, 0, BORDERWIDTH, this.canvas.height, COLOR)
         this.addSquare(0, this.canvas.height - BORDERWIDTH, this.canvas.width, BORDERWIDTH, COLOR)
         this.addSquare(this.canvas.width - BORDERWIDTH, 0, BORDERWIDTH, this.canvas.height, COLOR)
-        this.addSquare(this.canvas.width / 4, this.canvas.height / 3, this.canvas.width / 2, this.canvas.height / 3, COLOR)
+        this.addSquare(this.canvas.width / 6, this.canvas.height / 3, this.canvas.width / 1.5, this.canvas.height / 3, COLOR)
     }
 
     draw() {

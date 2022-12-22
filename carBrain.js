@@ -17,8 +17,6 @@ export default class CarBrain {
         if (bestCarWeights != false) {
             this.model.setWeights(bestCarWeights)
             if (!isFirstCar) {
-                // console.log(mutationRate);
-                // console.log(mutationAmount);
                 this.mutate(mutationRate, mutationAmount)
             }
         }
