@@ -1,18 +1,15 @@
 
 export default class Car {
-    constructor({ cvs, obstacles, color, speed, height, width, x, y, brain, framesPerDecision }) {
+    constructor({ cvs, obstacles, speed, height, width, x, y, brain, framesPerDecision }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
-        this.color = color ? color : `rgb(${(Math.random() * 255).toFixed()}, 
-                                          ${(Math.random() * 255).toFixed()}, 
-                                          ${(Math.random() * 255).toFixed()})`
+        this.color = `rgb(${(Math.random() * 255).toFixed()}, 
+                          ${(Math.random() * 255).toFixed()}, 
+                          ${(Math.random() * 255).toFixed()})`
         this.height = height
         this.width = width
         this.brain = brain
-        this.coord = {
-            x: x,
-            y: y,
-        }
+        this.coord = { x: x, y: y, }
         this.speed = speed
         this.obstacles = obstacles
         this.framesPerDecision = framesPerDecision
@@ -23,7 +20,6 @@ export default class Car {
         this.score = 0
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angle = Math.acos((this.width / 2) / this.radius) / (Math.PI / 180)
-        // left, left-forward, forward, right-forward, right
         this.inputAngles = [0, 45, 90, 135, 180]
         this.inputDistances = []
         for (let i = 0; i < this.inputAngles.length; i++)
@@ -77,13 +73,18 @@ export default class Car {
     drive() {
         if (this.isDead) {
             return
-        } else if (this.hasHitObstacle()) {
-            this.isDead = true
         } else {
             let radians = this.degrees * Math.PI / 180
             this.coord.x += Math.cos(radians) * this.speed
             this.coord.y += Math.sin(radians) * this.speed
             this.updateDistanceToObstacle()
+        }
+        this.dieIfHitOstacle()
+    }
+
+    dieIfHitOstacle(/* obstacles */) {
+        if (this.hasHitObstacle()) {
+            this.isDead = true
         }
     }
 
