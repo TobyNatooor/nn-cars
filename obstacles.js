@@ -3,7 +3,7 @@ export default class Obstacles {
     constructor({ cvs }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
-        this.data = { squares: [], pointblocks: [] }
+        this.data = { squares: [] }
 
         this.createSquareArena()
     }

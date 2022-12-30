@@ -1,3 +1,4 @@
+import { getCoordsFromPoint } from "./build/untouched.js";
 
 export default class Car {
     constructor({ cvs, obstacles, color, speed, height, width, x, y, brain, framesPerDecision }) {
@@ -9,10 +10,8 @@ export default class Car {
         this.height = height
         this.width = width
         this.brain = brain
-        this.coord = {
-            x: x,
-            y: y,
-        }
+        this.x = x
+        this.y = y
         this.speed = speed
         this.obstacles = obstacles
         this.framesPerDecision = framesPerDecision
@@ -30,35 +29,23 @@ export default class Car {
             this.inputDistances.push(0)
     }
 
-    getCoords(radius, degrees) {
-        let radians = degrees * Math.PI / 180
-        return {
-            x: this.coord.x + radius * Math.sin(radians),
-            y: this.coord.y - radius * Math.cos(radians),
-        }
-    }
-
     draw() {
         this.degrees += this.turnSpeed
 
         this.ctx.beginPath()
-        let coordsBackRight = this.getCoords(this.radius, this.degrees - 90 - this.angle)
-        let coordsBackLeft = this.getCoords(this.radius, this.degrees - 90 + this.angle)
-        let coordsFrontLeft = this.getCoords(this.radius, this.degrees + 90 - this.angle)
-        let coordsFrontRight = this.getCoords(this.radius, this.degrees + 90 + this.angle)
-        this.ctx.moveTo(coordsBackRight.x, coordsBackRight.y)     // back right
-        this.ctx.lineTo(coordsBackLeft.x, coordsBackLeft.y)       // back left
-        this.ctx.lineTo(coordsFrontLeft.x, coordsFrontLeft.y)     // front left
-        this.ctx.lineTo(coordsFrontRight.x, coordsFrontRight.y)   // front right
+        this.ctx.moveTo(...getCoordsFromPoint(this.radius, this.degrees - 90 - this.angle, this.x, this.y)) // back right
+        this.ctx.lineTo(...getCoordsFromPoint(this.radius, this.degrees - 90 + this.angle, this.x, this.y)) // back left
+        this.ctx.lineTo(...getCoordsFromPoint(this.radius, this.degrees + 90 - this.angle, this.x, this.y)) // front left
+        this.ctx.lineTo(...getCoordsFromPoint(this.radius, this.degrees + 90 + this.angle, this.x, this.y)) // front right
 
         this.ctx.fillStyle = this.color
         this.ctx.fill()
     }
 
-    coordHitObstacle(coord) {
+    coordHitObstacle(coords) {
         for (let i = 0; i < this.obstacles.squares.length; i++) {
-            if (this.obstacles.squares[i].x < coord.x && coord.x < this.obstacles.squares[i].x + this.obstacles.squares[i].width &&
-                this.obstacles.squares[i].y < coord.y && coord.y < this.obstacles.squares[i].y + this.obstacles.squares[i].height) {
+            if (this.obstacles.squares[i].x < coords[0] && coords[0] < this.obstacles.squares[i].x + this.obstacles.squares[i].width &&
+                this.obstacles.squares[i].y < coords[1] && coords[1] < this.obstacles.squares[i].y + this.obstacles.squares[i].height) {
                 return true
             }
         }
@@ -66,8 +53,8 @@ export default class Car {
     }
 
     hasHitObstacle() {
-        if (this.coordHitObstacle(this.getCoords(this.radius, this.degrees + 90 - this.angle)) ||   // front left car coord 
-            this.coordHitObstacle(this.getCoords(this.radius, this.degrees + 90 + this.angle))      // front right car coord
+        if (this.coordHitObstacle(getCoordsFromPoint(this.radius, this.degrees + 90 - this.angle, this.x, this.y)) ||   // front left car coord 
+            this.coordHitObstacle(getCoordsFromPoint(this.radius, this.degrees + 90 + this.angle, this.x, this.y))      // front right car coord
         ) {
             return true
         }
@@ -81,17 +68,17 @@ export default class Car {
             this.isDead = true
         } else {
             let radians = this.degrees * Math.PI / 180
-            this.coord.x += Math.cos(radians) * this.speed
-            this.coord.y += Math.sin(radians) * this.speed
+            this.x += Math.cos(radians) * this.speed
+            this.y += Math.sin(radians) * this.speed
             this.updateDistanceToObstacle()
         }
     }
 
     drawDistances() {
         for (let i = 0; i < this.inputDistances.length; i++) {
-            let lineEndCoords = this.getCoords(this.inputDistances[i], this.degrees + this.inputAngles[i])
+            let lineEndCoords = getCoordsFromPoint(this.inputDistances[i], this.degrees + this.inputAngles[i], this.x, this.y)
             this.ctx.beginPath()
-            this.ctx.moveTo(this.coord.x, this.coord.y)
+            this.ctx.moveTo(this.coords[0], this.coords[1])
             this.ctx.lineTo(lineEndCoords.x, lineEndCoords.y)
             this.ctx.stroke()
         }
@@ -103,8 +90,8 @@ export default class Car {
             let distanceFound = false
             while (!distanceFound) {
                 this.inputDistances[i] += 10
-                if (this.coordHitObstacle(this.getCoords(this.inputDistances[i], this.degrees + this.inputAngles[i]))) {
-                    while (this.coordHitObstacle(this.getCoords(this.inputDistances[i], this.degrees + this.inputAngles[i]))) {
+                if (this.coordHitObstacle(getCoordsFromPoint(this.inputDistances[i], this.degrees + this.inputAngles[i], this.x, this.y))) {
+                    while (this.coordHitObstacle(getCoordsFromPoint(this.inputDistances[i], this.degrees + this.inputAngles[i], this.x, this.y))) {
                         this.inputDistances[i] -= 1
                     }
                     distanceFound = true

@@ -1,0 +1,33 @@
+{
+    "name": "car-game-nn",
+    "version": "1.0.0",
+    "description": "cars with neural networks",
+    "main": "main.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TobyNatooor/car-game-NN.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/TobyNatooor/car-game-NN/issues"
+    },
+    "homepage": "https://github.com/TobyNatooor/car-game-NN#readme",
+	"scripts": {
+		"dev": "npm run build:untouched && npm run serve",
+		"build": "npm run build:untouched && npm run build:optimized",
+		"serve": "serve ./",
+		"build:untouched": "asc assembly/index.ts --target debug --exportRuntime --exportTable --explicitStart",
+		"build:optimized": "asc assembly/index.ts --target release --exportRuntime --exportTable --explicitStart",
+		"test": "node tests"
+	},
+	"dependencies": {
+		"@assemblyscript/loader": "latest",
+		"asdom": "lume/asdom",
+		"ecmassembly": "latest"
+	},
+	"devDependencies": {
+		"assemblyscript": "latest",
+		"serve": "latest"
+	}
+}

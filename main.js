@@ -2,15 +2,32 @@ import Canvas from './canvas.js'
 import Obstacles from './obstacles.js'
 import CarPopulation from './carPopulation.js'
 
-const carPopulationRange = document.querySelector('#carPopulation')
-const carSpeedRange = document.querySelector('#carSpeed')
-const framesPerDecisionRange = document.querySelector('#framesPerDecision')
-const mutationRateRange = document.querySelector('#mutationRate')
-const displayCarVisionCheckbox = document.querySelector('#displayCarVision')
-const displayMouseCoordsCheckbox = document.querySelector('#displayMouseCoords')
-const generationLabel = document.querySelector('#populationNumber')
-const mutationAmountRange = document.querySelector('#mutationAmount')
-const hiddenNeuronsRange = document.querySelector('#hiddenNeurons')
+import {Asdom} from './node_modules/asdom/glue/index.js'
+import {ECMAssembly} from './node_modules/ecmassembly/index.js'
+import {instantiate} from './node_modules/@assemblyscript/loader/index.js'
+
+async function main() {
+	const asdom = new Asdom()
+	const ecmassembly = new ECMAssembly()
+	const {exports} = await instantiate(fetch('./build/untouched.wasm'), {
+		...asdom.wasmImports,
+		...ecmassembly.wasmImports,
+	})
+    asdom.wasmExports = exports
+	ecmassembly.wasmExports = exports
+	exports._start()
+}
+main()
+
+const carPopulationRange            = document.querySelector('#carPopulation')
+const carSpeedRange                 = document.querySelector('#carSpeed')
+const framesPerDecisionRange        = document.querySelector('#framesPerDecision')
+const mutationRateRange             = document.querySelector('#mutationRate')
+const displayCarVisionCheckbox      = document.querySelector('#displayCarVision')
+const displayMouseCoordsCheckbox    = document.querySelector('#displayMouseCoords')
+const generationLabel               = document.querySelector('#populationNumber')
+const mutationAmountRange           = document.querySelector('#mutationAmount')
+const hiddenNeuronsRange            = document.querySelector('#hiddenNeurons')
 const CANVASID = 'theCanvas'
 
 let stopID, canvas, obstacles, carPopulation
