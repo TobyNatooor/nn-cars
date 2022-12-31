@@ -2,7 +2,7 @@ import Car from './car.js'
 import CarBrain from './carBrain.js'
 
 export default class CarPopulation {
-    constructor({ cvs, obstacles, carPopulation, carSpeed, framesPerDecision, mutationRate, mutationAmount, hiddenNeurons }) {
+    constructor({ cvs, obstacles, carPopulation, carSpeed, framesPerDecision, mutationRate, mutationAmount, hiddenNeurons, inputAngles }) {
         this.cvs = cvs
         this.ctx = cvs.ctx
         this.carSpeed = carSpeed
@@ -13,6 +13,7 @@ export default class CarPopulation {
         this.carPopulation = carPopulation
         this.framesPerDecision = framesPerDecision
 
+        this.inputAngles = inputAngles
         this.cars = []
         this.deadCars = 0
         this.generation = 0
@@ -21,25 +22,17 @@ export default class CarPopulation {
         this.createCarPopulation()
     }
 
+    livingCars(callback) {
+        for (let i = 0; i < this.cars.length; i++) {
+            if (!this.cars[i].isDead) {
+                callback(this.cars[i])
+            }
+        }
+    }
+
     disposeCarBrains() {
         for (let i = 0; i < this.cars.length; i++) {
             this.cars[i].brain.dispose()
-        }
-    }
-
-    draw() {
-        for (let i = 0; i < this.cars.length; i++) {
-            if (!this.cars[i].isDead) {
-                this.cars[i].draw()
-            }
-        }
-    }
-
-    drawDistances() {
-        for (let i = 0; i < this.cars.length; i++) {
-            if (!this.cars[i].isDead) {
-                this.cars[i].drawDistances()
-            }
         }
     }
 
@@ -58,7 +51,7 @@ export default class CarPopulation {
             let car = new Car({
                 cvs: this.cvs,
                 obstacles: this.obstacles,
-                brain: new CarBrain(5, this.hiddenNeurons, 2, this.mutationRate, bestCarWeights, isFirstCar, this.mutationAmount),
+                brain: new CarBrain(this.inputAngles.length, this.hiddenNeurons, 2, this.mutationRate, bestCarWeights, isFirstCar, this.mutationAmount),
                 speed: this.carSpeed,
                 x: coord.x,
                 y: coord.y,
@@ -66,6 +59,7 @@ export default class CarPopulation {
                 width: width,
                 mutationRate: this.mutationRate,
                 framesPerDecision: this.framesPerDecision,
+                inputAngles: this.inputAngles
             })
             this.cars.push(car)
         }
@@ -111,18 +105,13 @@ export default class CarPopulation {
         console.log('numTensors: ', tf.memory().numTensors)
     }
 
-    drive() {
-        this.deadCars = 0
+    isDead() {
+        let allCarsAreDead = true
         for (let i = 0; i < this.cars.length; i++) {
-            if (this.cars[i].isDead) {
-                this.deadCars++
-            } else {
-                this.cars[i].useBrain()
-                this.cars[i].drive()
+            if (!this.cars[i].isDead) {
+                allCarsAreDead = false
             }
         }
-        if (this.deadCars == this.carPopulation) {
-            this.newGeneration()
-        }
+        return allCarsAreDead
     }
 }

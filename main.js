@@ -19,17 +19,28 @@ let isAnimating = true
 function animate() {
     canvas.clear()
     obstacles.draw()
-    carPopulation.drive()
-    carPopulation.draw()
-    if (carPopulation.deadCars == carPopulation.carPopulation) generationLabel.innerHTML = `Generation: ${carPopulation.generation}`
-    if (displayCarVisionCheckbox.checked) carPopulation.drawDistances()
+    carPopulation.livingCars((car) => {
+        car.dieIfHitObstacle(obstacles.data)
+        car.updateDistanceToObstacles(obstacles.data)
+        car.useBrain()
+        car.drive()
+        car.draw()
+        if (displayCarVisionCheckbox.checked) car.drawDistances()
+    })
+
+    if (carPopulation.isDead()) {
+        generationLabel.innerHTML = `Generation: ${carPopulation.generation}`
+        carPopulation.newGeneration()
+    }
     if (displayMouseCoordsCheckbox.checked) canvas.showMouseCoords("black")
+
     stopID = window.requestAnimationFrame(animate)
 }
 
 function start() {
     canvas = new Canvas({ canvasID: CANVASID, })
     obstacles = new Obstacles({ cvs: canvas, })
+    console.log(obstacles.data);
     carPopulation = new CarPopulation({
         cvs: canvas,
         obstacles: obstacles.data,
@@ -40,6 +51,7 @@ function start() {
         hiddenNeurons: parseInt(hiddenNeuronsRange.value),
         mutationRate: parseFloat(mutationRateRange.value),
         mutationAmount: parseFloat(mutationAmountRange.value),
+        inputAngles: [0, 30, 60, 90, 120, 150, 180]
     })
     generationLabel.innerHTML = `Generation: ${carPopulation.generation}`
     animate()
