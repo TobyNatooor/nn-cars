@@ -1,6 +1,6 @@
 
 export default class Car {
-    constructor({ cvs, obstacles, speed, height, width, x, y, brain, framesPerDecision, inputAngles }) {
+    constructor({ cvs, obstacles, speed, height, width, x, y, brain, inputAngles }) {
         this.canvas = cvs.canvas
         this.ctx = cvs.ctx
         this.color = `rgb(${(Math.random() * 255).toFixed()}, 
@@ -12,7 +12,6 @@ export default class Car {
         this.coord = { x: x, y: y, }
         this.speed = speed
         this.obstacles = obstacles
-        this.framesPerDecision = framesPerDecision
         this.isDead = false
         this.degrees = 0
         this.turnRate = 2
@@ -107,11 +106,7 @@ export default class Car {
 
     useBrain() {
         this.score++
-        if (this.score % this.framesPerDecision != 0) {
-            return
-        }
-
-        const prediction = this.brain.predict(this.inputDistances)
+        const prediction = this.brain.getOutput(this.inputDistances)
         if (prediction[0] < 0.5) {
             this.turnSpeed = -this.turnRate
         } else {

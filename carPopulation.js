@@ -1,8 +1,8 @@
 import Car from './car.js'
-import CarBrain from './carBrain.js'
+import NeuralNetwork from './neuralNetwork.js'
 
 export default class CarPopulation {
-    constructor({ cvs, obstacles, carPopulation, carSpeed, framesPerDecision, mutationRate, mutationAmount, hiddenNeurons, inputAngles }) {
+    constructor({ cvs, obstacles, carPopulation, carSpeed, mutationRate, mutationAmount, hiddenNeurons, inputAmount }) {
         this.cvs = cvs
         this.ctx = cvs.ctx
         this.carSpeed = carSpeed
@@ -10,67 +10,74 @@ export default class CarPopulation {
         this.mutationRate = mutationRate
         this.mutationAmount = mutationAmount
         this.hiddenNeurons = hiddenNeurons
-        this.carPopulation = carPopulation
-        this.framesPerDecision = framesPerDecision
+        this.population = carPopulation
 
-        this.inputAngles = inputAngles
+        this.bestCar
         this.cars = []
-        this.deadCars = 0
         this.generation = 0
-        this.bestCar = { weights: [], score: 0 }
 
+        this.inputAngles = []
+        for (let i = 0; i < 180; i += 180/inputAmount)
+            this.inputAngles.push(i)
+        
         this.createCarPopulation()
     }
 
     livingCars(callback) {
-        for (let i = 0; i < this.cars.length; i++) {
+        for (let i = this.cars.length - 1; 0 <= i; i--) {
             if (!this.cars[i].isDead) {
                 callback(this.cars[i])
             }
         }
     }
 
-    disposeCarBrains() {
-        for (let i = 0; i < this.cars.length; i++) {
-            this.cars[i].brain.dispose()
-        }
-    }
+    createCarPopulation() {
+        this.generation++
 
-    createCarPopulation(bestCarWeights = false) {
         this.cars = []
-        let coord = {
+        const coord = {
             x: this.cvs.canvas.width * 0.25,
             y: this.cvs.canvas.height * 0.2
         }
-        let height = (this.cvs.canvas.width * 0.01).toFixed()
-        let width = (this.cvs.canvas.width * 0.02).toFixed()
-
-        for (let i = 0; i < this.carPopulation; i++) {
-            let isFirstCar = (i == 0)
-
-            let car = new Car({
+        const height = (this.cvs.canvas.width * 0.01).toFixed()
+        const width = (this.cvs.canvas.width * 0.02).toFixed()
+        const shape = [this.inputAngles.length, this.hiddenNeurons, 2]
+        
+        for (let i = 0; i < this.population; i++) {
+            let brain
+            if (this.generation == 1) {
+                brain = new NeuralNetwork(shape)
+            } else if (i == 0 && this.generation != 1) {
+                brain = this.bestCar.brain
+            } else {
+                brain = new NeuralNetwork(shape, this.bestCar.brain.weights, this.bestCar.brain.biases)
+            }
+            this.cars.push(new Car({
                 cvs: this.cvs,
                 obstacles: this.obstacles,
-                brain: new CarBrain(this.inputAngles.length, this.hiddenNeurons, 2, this.mutationRate, bestCarWeights, isFirstCar, this.mutationAmount),
+                brain: brain,
                 speed: this.carSpeed,
                 x: coord.x,
                 y: coord.y,
                 height: height,
                 width: width,
                 mutationRate: this.mutationRate,
-                framesPerDecision: this.framesPerDecision,
                 inputAngles: this.inputAngles
-            })
-            this.cars.push(car)
+            }))
+            if (i != 0) {
+                this.cars[i].brain.mutate(this.mutationRate, this.mutationAmount)
+            } else {
+                this.cars[i].color = "rgb(0, 0, 0)"
+            }
         }
-
-        this.cars[0].color = "rgb(0, 0, 0)"
-        this.generation++
     }
 
     getBestCar() {
         let bestCarI = 0
         let newBestCarFound = false
+        if (!this.bestCar) {
+            this.bestCar = this.cars[0]
+        }
         for (let i = 0; i < this.cars.length; i++) {
             if (this.bestCar.score < this.cars[i].score) {
                 this.bestCar.score = this.cars[i].score
@@ -81,37 +88,21 @@ export default class CarPopulation {
         if (!newBestCarFound) {
             return this.bestCar
         }
-        console.log("New highscore: ", this.cars[bestCarI].score);
-        let weights, weightCopies = []
-
-        weights = this.cars[bestCarI].brain.model.getWeights()
-
-        if (this.bestCar.weights) {
-            for (let i = 0; i < this.bestCar.weights.length; i++) {
-                this.bestCar.weights[i].dispose()
-            }
-        }
-        for (let i = 0; i < weights.length; i++) {
-            weightCopies[i] = weights[i].clone()
-        }
-        return { weights: weightCopies, score: this.cars[bestCarI].score }
+        return this.cars[bestCarI]
     }
 
     newGeneration() {
         this.bestCar = this.getBestCar()
-        this.disposeCarBrains()
-        this.createCarPopulation(this.bestCar.weights)
-
-        console.log('numTensors: ', tf.memory().numTensors)
+        console.log("highest score:", this.bestCar.score)
+        this.createCarPopulation()
     }
 
     isDead() {
-        let allCarsAreDead = true
         for (let i = 0; i < this.cars.length; i++) {
             if (!this.cars[i].isDead) {
-                allCarsAreDead = false
+                return false
             }
         }
-        return allCarsAreDead
+        return true
     }
 }
