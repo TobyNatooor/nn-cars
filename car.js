@@ -6,19 +6,21 @@ export default class Car {
         this.color = `rgb(${(Math.random() * 255).toFixed()}, 
                           ${(Math.random() * 255).toFixed()}, 
                           ${(Math.random() * 255).toFixed()})`
+        this.speed = speed
         this.height = height
         this.width = width
         this.brain = brain
         this.coord = { x: x, y: y, }
-        this.speed = speed
         this.obstacles = obstacles
         this.isDead = false
-        this.degrees = 0
         this.turnRate = 2
         this.turnSpeed = 0
+        this.degrees = 0
         this.score = 0
+        
         this.radius = Math.sqrt((this.height / 2) ** 2 + (this.width / 2) ** 2)
         this.angle = Math.acos((this.width / 2) / this.radius) / (Math.PI / 180)
+        
         this.inputAngles = inputAngles
         this.inputDistances = []
         for (let i = 0; i < this.inputAngles.length; i++)
@@ -69,13 +71,11 @@ export default class Car {
     }
 
     drive() {
-        if (this.isDead) {
-            return
-        } else {
-            let radians = this.degrees * Math.PI / 180
-            this.coord.x += Math.cos(radians) * this.speed
-            this.coord.y += Math.sin(radians) * this.speed
-        }
+        if (this.isDead) return
+
+        let radians = this.degrees * Math.PI / 180
+        this.coord.x += Math.cos(radians) * this.speed
+        this.coord.y += Math.sin(radians) * this.speed
     }
 
     drawDistances() {

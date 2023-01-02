@@ -100,7 +100,7 @@ document.querySelector('#hiddenNeuronsLabel').innerText = `Hidden neurons (${hid
 hiddenNeuronsRange.addEventListener('input', () => {
     document.querySelector('#hiddenNeuronsLabel').innerText = `Hidden neurons (${hiddenNeuronsRange.value})`
 })
-document.querySelector('#inputsLabel').innerText = `Inputs (${inputsRange.value})`
+document.querySelector('#inputsLabel').innerText = `Distance inputs (${inputsRange.value})`
 inputsRange.addEventListener('input', () => {
-    document.querySelector('#inputsLabel').innerText = `Inputs (${inputsRange.value})`
+    document.querySelector('#inputsLabel').innerText = `Distance inputs (${inputsRange.value})`
 })

@@ -12,7 +12,7 @@ export default class NeuralNetwork {
                     if (weights) {
                         this.weights[i][j].push(weights[i][j][k])
                     } else {
-                        this.weights[i][j].push(Math.random())
+                        this.weights[i][j].push(Math.random() - 0.5)
                     }
                 }
             }
@@ -23,7 +23,7 @@ export default class NeuralNetwork {
                 if (biases) {
                     this.biases[i].push(biases[i][j])
                 } else {
-                    this.biases[i].push(Math.random())
+                    this.biases[i].push(Math.random() - 0.5)
                 }
             }
         }
@@ -34,10 +34,11 @@ export default class NeuralNetwork {
     }
 
     softmax(array) {
-        let sum = 0, newArray = []
+        let sum = 0
         for (let i = 0; i < array.length; i++) {
             sum += array[i]
         }
+        let newArray = []
         for (let i = 0; i < array.length; i++) {
             newArray.push(array[i] / sum)
         }
@@ -45,8 +46,7 @@ export default class NeuralNetwork {
     }
 
     getOutput(input) {
-        let activations = [this.softmax(input)] // [input]
-        // console.log(activations);
+        let activations = [input]
         for (let i = 0; i < this.shape.length - 1; i++) {
             activations.push([])
             for (let j = 0; j < this.shape[i + 1]; j++) {
@@ -65,7 +65,7 @@ export default class NeuralNetwork {
             for (let j = 0; j < this.weights[i].length; j++) {
                 for (let k = 0; k < this.weights[i][j].length; k++) {
                     if (Math.random() < rate) {
-                        this.weights[i][j][k] += Math.random() * amount
+                        this.weights[i][j][k] += (Math.random() - 0.5) * amount
                     }
                 }
             }
@@ -73,7 +73,7 @@ export default class NeuralNetwork {
         for (let i = 0; i < this.biases.length; i++) {
             for (let j = 0; j < this.biases[i].length; j++) {
                 if (Math.random() < rate) {
-                    this.biases[i][j] += Math.random() * amount
+                    this.biases[i][j] += (Math.random() - 0.5) * amount
                 }
             }
         }

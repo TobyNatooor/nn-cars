@@ -17,7 +17,7 @@ export default class CarPopulation {
         this.generation = 0
 
         this.inputAngles = []
-        for (let i = 0; i < 180; i += 180/inputAmount)
+        for (let i = 0; i <= 180; i += 180/(inputAmount-1))
             this.inputAngles.push(i)
         
         this.createCarPopulation()
@@ -93,7 +93,6 @@ export default class CarPopulation {
 
     newGeneration() {
         this.bestCar = this.getBestCar()
-        console.log("highest score:", this.bestCar.score)
         this.createCarPopulation()
     }
 
